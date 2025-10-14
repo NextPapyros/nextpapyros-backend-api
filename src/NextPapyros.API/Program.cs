@@ -1,17 +1,18 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using NextPapyros.API.Startup;
 using NextPapyros.Domain.Repositories;
-using NextPapyros.Infrastructure.Auth;
 using NextPapyros.Infrastructure;
+using NextPapyros.Infrastructure.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Infrastructure section
+// Infra
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// Authentication JWT section
+// JWT
 var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -33,9 +34,54 @@ builder.Services
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
+// Swagger / OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "NextPapyros API",
+        Version = "v1",
+        Description = "Backend API de NextPapyros"
+    });
+
+    // XML comments
+    var xml = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xml);
+    if (File.Exists(xmlPath)) c.IncludeXmlComments(xmlPath);
+
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Usa el esquema **Bearer**. Ej: `Bearer eyJ...`",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { securityScheme, Array.Empty<string>() }
+    });
+});
+
 var app = builder.Build();
 
-// Seeder added to create an initial Admin user and role. Won't be created if they already exist
+// Middleware Swagger
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "NextPapyros API v1");
+    c.RoutePrefix = "swagger"; // http://localhost:XXXX/swagger
+});
+
 using (var scope = app.Services.CreateScope())
 {
     var sp = scope.ServiceProvider;

@@ -1,4 +1,3 @@
-// Seeder created in order to have an initial Admin user and role when the app runs for the first time
 using NextPapyros.Domain.Entities;
 using NextPapyros.Domain.Repositories;
 using NextPapyros.Infrastructure.Auth;
@@ -14,6 +13,7 @@ public static class DbSeeder
         CancellationToken ct = default)
     {
         var adminRole = await roles.GetByNameAsync("Admin", ct);
+
         if (adminRole is null)
         {
             adminRole = new Rol { Nombre = "Admin", Descripcion = "Administrador" };
@@ -30,6 +30,14 @@ public static class DbSeeder
 
             await users.AddAsync(admin, ct);
             await users.SaveChangesAsync(ct);
+        }
+
+        // Adds "Empleado" role if it doesn't exist
+        var empleadoRole = await roles.GetByNameAsync("Empleado", ct);
+        if (empleadoRole is null)
+        {
+            await roles.AddAsync(new Rol { Nombre = "Empleado", Descripcion = "Empleado de tienda", Activo = true }, ct);
+            await roles.SaveChangesAsync(ct);
         }
     }
 }
