@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NextPapyros.Domain\NextPapyros.Domain.csproj" />
-    <ProjectReference Include="..\NextPapyros.Infrastructure\NextPapyros.Infrastructure.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -1,0 +1,49 @@
+# Compilados y binarios
+bin/
+obj/
+out/
+*.dll
+*.exe
+*.pdb
+*.db
+*.log
+
+# Configuración de usuario
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Paquetes y dependencias
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+node_modules/
+
+# Archivos temporales
+*.tmp
+*.temp
+*.bak
+*.swp
+*.DS_Store
+
+# Archivos del sistema
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Archivos de publicación
+publish/
+wwwroot/
+
+# Archivos sensibles
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# Docker
+*.env
+docker-compose.override.yml

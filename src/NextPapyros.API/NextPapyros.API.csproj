@@ -2,6 +2,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NextPapyros.Application\NextPapyros.Application.csproj" />
+    <ProjectReference Include="..\NextPapyros.Infrastructure\NextPapyros.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.20" />
   </ItemGroup>
 
   <PropertyGroup>

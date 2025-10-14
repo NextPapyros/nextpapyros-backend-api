@@ -1,17 +1,159 @@
 {
   "format": 1,
   "restore": {
-    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/NextPapyros.API/NextPapyros.API.csproj": {}
+    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.API/NextPapyros.API.csproj": {}
   },
   "projects": {
-    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/NextPapyros.API/NextPapyros.API.csproj": {
+    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.API/NextPapyros.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/NextPapyros.API/NextPapyros.API.csproj",
+        "projectUniqueName": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.API/NextPapyros.API.csproj",
         "projectName": "NextPapyros.API",
-        "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/NextPapyros.API/NextPapyros.API.csproj",
+        "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.API/NextPapyros.API.csproj",
         "packagesPath": "/Users/AlejoGonzalezU/.nuget/packages/",
-        "outputPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/NextPapyros.API/obj/",
+        "outputPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.API/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/AlejoGonzalezU/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Application/NextPapyros.Application.csproj": {
+                "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Application/NextPapyros.Application.csproj"
+              },
+              "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj": {
+                "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.20, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.305/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Application/NextPapyros.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Application/NextPapyros.Application.csproj",
+        "projectName": "NextPapyros.Application",
+        "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Application/NextPapyros.Application.csproj",
+        "packagesPath": "/Users/AlejoGonzalezU/.nuget/packages/",
+        "outputPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Application/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/AlejoGonzalezU/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj": {
+                "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.305/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj",
+        "projectName": "NextPapyros.Domain",
+        "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj",
+        "packagesPath": "/Users/AlejoGonzalezU/.nuget/packages/",
+        "outputPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/AlejoGonzalezU/.nuget/NuGet/NuGet.Config"
@@ -55,9 +197,89 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
-            "Microsoft.AspNetCore.App": {
-              "privateAssets": "none"
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.305/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj",
+        "projectName": "NextPapyros.Infrastructure",
+        "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj",
+        "packagesPath": "/Users/AlejoGonzalezU/.nuget/packages/",
+        "outputPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/AlejoGonzalezU/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj": {
+                "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
             },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
