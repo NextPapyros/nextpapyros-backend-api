@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NextPapyros.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d2e9dd0dc3bb75bc088e933cf01314c6acdccbec")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+447b2aae013772bd874d486ab1f7e9a7ec71095b")]
 [assembly: System.Reflection.AssemblyProductAttribute("NextPapyros.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NextPapyros.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

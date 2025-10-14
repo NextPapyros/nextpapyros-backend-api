@@ -1,6 +1,9 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using NextPapyros.API.Startup;
+using NextPapyros.Domain.Repositories;
+using NextPapyros.Infrastructure.Auth;
 using NextPapyros.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +34,17 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+// Seeder added to create an initial Admin user and role. Won't be created if they already exist
+using (var scope = app.Services.CreateScope())
+{
+    var sp = scope.ServiceProvider;
+    await DbSeeder.SeedAsync(
+        sp.GetRequiredService<IUsuarioRepository>(),
+        sp.GetRequiredService<IRoleRepository>(),
+        sp.GetRequiredService<IPasswordHasher>()
+    );
+}
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
