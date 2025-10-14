@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/NextPapyros.API/NextPapyros.API.csproj",
-      "projectName": "NextPapyros.API",
-      "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/NextPapyros.API/NextPapyros.API.csproj",
+      "projectUniqueName": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Application/NextPapyros.Application.csproj",
+      "projectName": "NextPapyros.Application",
+      "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Application/NextPapyros.Application.csproj",
       "packagesPath": "/Users/AlejoGonzalezU/.nuget/packages/",
-      "outputPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/NextPapyros.API/obj/",
+      "outputPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Application/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/AlejoGonzalezU/.nuget/NuGet/NuGet.Config"
@@ -61,9 +61,6 @@
         "assetTargetFallback": true,
         "warn": true,
         "frameworkReferences": {
-          "Microsoft.AspNetCore.App": {
-            "privateAssets": "none"
-          },
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
