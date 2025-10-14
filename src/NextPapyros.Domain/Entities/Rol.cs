@@ -1,4 +1,3 @@
-// Entities/Rol.cs
 namespace NextPapyros.Domain.Entities;
 
 public class Rol

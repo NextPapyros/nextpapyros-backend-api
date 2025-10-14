@@ -12,4 +12,5 @@ public class Venta
     public string? MotivoAnulacion { get; set; }
 
     public ICollection<LineaVenta> Lineas { get; set; } = [];
+    public ICollection<Devolucion> Devoluciones { get; set; } = [];
 }
