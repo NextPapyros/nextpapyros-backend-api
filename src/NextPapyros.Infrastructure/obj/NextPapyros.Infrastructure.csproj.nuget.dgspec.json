@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj": {}
+    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj": {}
   },
   "projects": {
-    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj": {
+    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj",
+        "projectUniqueName": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj",
         "projectName": "NextPapyros.Domain",
-        "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj",
+        "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj",
         "packagesPath": "/Users/AlejoGonzalezU/.nuget/packages/",
-        "outputPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/obj/",
+        "outputPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/AlejoGonzalezU/.nuget/NuGet/NuGet.Config"
@@ -63,14 +63,14 @@
         }
       }
     },
-    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj": {
+    "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj",
+        "projectUniqueName": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj",
         "projectName": "NextPapyros.Infrastructure",
-        "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj",
+        "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj",
         "packagesPath": "/Users/AlejoGonzalezU/.nuget/packages/",
-        "outputPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/obj/",
+        "outputPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/AlejoGonzalezU/.nuget/NuGet/NuGet.Config"
@@ -85,8 +85,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj": {
-                "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj"
+              "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj": {
+                "projectPath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Domain/NextPapyros.Domain.csproj"
               }
             }
           }

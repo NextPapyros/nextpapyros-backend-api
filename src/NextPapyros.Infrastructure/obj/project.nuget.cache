@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "yRgXXadaYNA=",
+  "dgSpecHash": "lom1kn9ArOw=",
   "success": true,
-  "projectFilePath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj",
+  "projectFilePath": "/Users/AlejoGonzalezU/Downloads/ITM/Diseño de Sistemas de Información/Código/nextpapyros-backend-api/src/NextPapyros.Infrastructure/NextPapyros.Infrastructure.csproj",
   "expectedPackageFiles": [
     "/Users/AlejoGonzalezU/.nuget/packages/azure.core/1.38.0/azure.core.1.38.0.nupkg.sha512",
     "/Users/AlejoGonzalezU/.nuget/packages/azure.identity/1.11.4/azure.identity.1.11.4.nupkg.sha512",
