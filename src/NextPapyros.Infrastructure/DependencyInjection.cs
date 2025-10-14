@@ -18,8 +18,9 @@ public static class DependencyInjection
             options.UseSqlServer(configuration.GetConnectionString("Default")!,
                 sql => sql.MigrationsHistoryTable("__EFMigrationsHistory", "dbo")));
 
-        // Repository section
+        // Repositories section
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IProductoRepository, ProductoRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
