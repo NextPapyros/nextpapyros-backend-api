@@ -1,262 +1,521 @@
-# 🧩 NextPapyros Backend API
+# 🧩 NextPapyros Backend API# 🧩 NextPapyros Backend API
 
-**NextPapyros** es una aplicación modular diseñada bajo los principios de **Clean Architecture** y **SOLID**, utilizando **.NET 8**, **C#**, **Entity Framework Core** y **SQL Server**.  
+
+
+Sistema de gestión empresarial para **inventario, ventas, compras, recepciones y devoluciones**, desarrollado con **.NET 8** siguiendo los principios de **Clean Architecture** y **SOLID**.**NextPapyros** es una aplicación modular diseñada bajo los principios de **Clean Architecture** y **SOLID**, utilizando **.NET 8**, **C#**, **Entity Framework Core** y **SQL Server**.  
+
 El objetivo del sistema es **gestionar inventario, ventas, compras, devoluciones y generación de reportes** de manera limpia, escalable y mantenible.
 
 ---
 
+---
+
+## 🚀 Características Principales
+
 ## 📋 Tabla de Contenidos
 
-- [Tecnologías Principales](#-tecnologías-principales)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Funcionalidades](#-funcionalidades)
-- [Requisitos Previos](#-requisitos-previos)
-- [Instalación y Configuración](#-instalación-y-configuración)
-  - [1. Clonar el Repositorio](#1-clonar-el-repositorio)
+- 🔐 **Autenticación JWT** con sistema de roles y permisos
+
+- 📦 **Gestión de Inventario** con control de stock y alertas- [Tecnologías Principales](#-tecnologías-principales)
+
+- 🛒 **Órdenes de Compra** y recepciones de mercancía- [Estructura del Proyecto](#-estructura-del-proyecto)
+
+- 💰 **Registro de Ventas** con múltiples métodos de pago- [Funcionalidades](#-funcionalidades)
+
+- 🔄 **Devoluciones** con trazabilidad completa- [Requisitos Previos](#-requisitos-previos)
+
+- 📊 **Reportes y Analytics** (top productos, stock bajo, ingresos mensuales)- [Instalación y Configuración](#-instalación-y-configuración)
+
+- 📝 **Auditoría** con logs de operaciones  - [1. Clonar el Repositorio](#1-clonar-el-repositorio)
+
   - [2. Configuración de la Base de Datos](#2-configuración-de-la-base-de-datos)
-  - [3. Configurar la Cadena de Conexión](#3-configurar-la-cadena-de-conexión)
+
+---  - [3. Configurar la Cadena de Conexión](#3-configurar-la-cadena-de-conexión)
+
   - [4. Aplicar Migraciones](#4-aplicar-migraciones)
-  - [5. Ejecutar el Proyecto](#5-ejecutar-el-proyecto)
+
+## 🛠️ Tecnologías  - [5. Ejecutar el Proyecto](#5-ejecutar-el-proyecto)
+
 - [Configuración Específica por Sistema Operativo](#-configuración-específica-por-sistema-operativo)
-  - [Windows (SQL Server Local)](#windows-sql-server-local)
-  - [macOS / Linux (Docker)](#macos--linux-docker)
-- [Endpoints y Documentación API](#-endpoints-y-documentación-api)
-- [Usuario Administrador por Defecto](#-usuario-administrador-por-defecto)
-- [Troubleshooting](#-troubleshooting)
-- [Contribución](#-contribución)
 
----
+| Tecnología | Versión | Descripción |  - [Windows (SQL Server Local)](#windows-sql-server-local)
 
-## 🚀 Tecnologías Principales
+|------------|---------|-------------|  - [macOS / Linux (Docker)](#macos--linux-docker)
 
-| Tecnología | Versión | Descripción |
+| **.NET** | 8.0 | Framework principal |- [Endpoints y Documentación API](#-endpoints-y-documentación-api)
+
+| **Entity Framework Core** | 9.0 | ORM y migraciones |- [Usuario Administrador por Defecto](#-usuario-administrador-por-defecto)
+
+| **SQL Server** | 2019+ | Base de datos |- [Troubleshooting](#-troubleshooting)
+
+| **JWT Bearer** | 8.0 | Autenticación |- [Contribución](#-contribución)
+
+| **Swagger/OpenAPI** | 6.x | Documentación API |
+
+| **BCrypt.Net** | 4.0 | Hashing de contraseñas |---
+
+
+
+---## 🚀 Tecnologías Principales
+
+
+
+## 🏗️ Arquitectura| Tecnología | Versión | Descripción |
+
 |-------------|---------|-------------|
-| **.NET** | 8.0 | Framework principal para el desarrollo del backend |
+
+El proyecto sigue **Clean Architecture** con separación en capas:| **.NET** | 8.0 | Framework principal para el desarrollo del backend |
+
 | **C#** | 12 | Lenguaje de programación |
-| **Entity Framework Core** | 9.0 | ORM para acceso a datos y migraciones |
-| **SQL Server** | 2019+ | Base de datos relacional |
-| **JWT Bearer** | 8.0 | Autenticación basada en tokens |
-| **Swagger/OpenAPI** | 6.x | Documentación interactiva de la API |
-| **BCrypt.Net** | 4.0 | Hashing seguro de contraseñas |
 
-### Arquitectura y Patrones
+```plaintext| **Entity Framework Core** | 9.0 | ORM para acceso a datos y migraciones |
 
-- **Clean Architecture**: Separación en capas independientes
-- **Principios SOLID**: Código limpio, extensible y mantenible
-- **Patrones de Diseño**: Repository, Unit of Work, Domain Services
-- **DDD (Domain-Driven Design)**: Modelado basado en el dominio del negocio
+┌─────────────────────────────────────────┐| **SQL Server** | 2019+ | Base de datos relacional |
 
----
+│         NextPapyros.API                 │  ← Capa de Presentación| **JWT Bearer** | 8.0 | Autenticación basada en tokens |
 
-## 🧱 Estructura del Proyecto
+│  (Controllers, DTOs, Middleware)        │| **Swagger/OpenAPI** | 6.x | Documentación interactiva de la API |
 
-```plaintext
-nextpapyros-backend-api/
-├── src/
-│   ├── NextPapyros.API/              # 🌐 Capa de Presentación
+└─────────────────────────────────────────┘| **BCrypt.Net** | 4.0 | Hashing seguro de contraseñas |
+
+                  ↓
+
+┌─────────────────────────────────────────┐### Arquitectura y Patrones
+
+│      NextPapyros.Application            │  ← Capa de Aplicación
+
+│      (Casos de Uso, Services)           │- **Clean Architecture**: Separación en capas independientes
+
+└─────────────────────────────────────────┘- **Principios SOLID**: Código limpio, extensible y mantenible
+
+                  ↓- **Patrones de Diseño**: Repository, Unit of Work, Domain Services
+
+┌─────────────────────────────────────────┐- **DDD (Domain-Driven Design)**: Modelado basado en el dominio del negocio
+
+│        NextPapyros.Domain               │  ← Capa de Dominio
+
+│  (Entities, Interfaces, Lógica)         │---
+
+└─────────────────────────────────────────┘
+
+                  ↑## 🧱 Estructura del Proyecto
+
+┌─────────────────────────────────────────┐
+
+│     NextPapyros.Infrastructure          │  ← Capa de Infraestructura```plaintext
+
+│  (EF Core, Repos, Auth, Migrations)     │nextpapyros-backend-api/
+
+└─────────────────────────────────────────┘├── src/
+
+```│   ├── NextPapyros.API/              # 🌐 Capa de Presentación
+
 │   │   ├── Controllers/              # Controladores REST
-│   │   ├── Contracts/                # DTOs y contratos de API
+
+### Patrones Implementados│   │   ├── Contracts/                # DTOs y contratos de API
+
 │   │   ├── Startup/                  # Configuración inicial (Seeder)
-│   │   ├── appsettings.json          # Configuración general
-│   │   └── Program.cs                # Punto de entrada
-│   │
-│   ├── NextPapyros.Application/      # 📦 Capa de Aplicación
+
+- **Repository Pattern**: Abstracción de acceso a datos│   │   ├── appsettings.json          # Configuración general
+
+- **Unit of Work**: Gestión de transacciones│   │   └── Program.cs                # Punto de entrada
+
+- **Dependency Injection**: Inversión de dependencias│   │
+
+- **Domain Services**: Lógica de negocio compleja│   ├── NextPapyros.Application/      # 📦 Capa de Aplicación
+
 │   │   └── (Casos de uso y lógica de aplicación)
-│   │
+
+---│   │
+
 │   ├── NextPapyros.Domain/           # 🎯 Capa de Dominio
-│   │   ├── Entities/                 # Entidades de negocio
+
+## 📦 Estructura del Proyecto│   │   ├── Entities/                 # Entidades de negocio
+
 │   │   │   ├── Producto.cs
-│   │   │   ├── Proveedor.cs
-│   │   │   ├── OrdenCompra.cs
-│   │   │   ├── Recepcion.cs
-│   │   │   ├── Venta.cs
-│   │   │   ├── Devolucion.cs
-│   │   │   ├── Usuario.cs
-│   │   │   ├── Rol.cs
-│   │   │   └── ...
-│   │   └── Repositories/             # Interfaces de repositorios
-│   │
-│   └── NextPapyros.Infrastructure/   # 🔧 Capa de Infraestructura
-│       ├── Auth/                     # Autenticación y seguridad
-│       ├── Persistence/              # DbContext y configuración EF
-│       ├── Repositories/             # Implementación de repositorios
-│       └── Migrations/               # Migraciones de base de datos
-│
-├── NextPapyros.sln                   # Solución de Visual Studio
-└── README.md                         # Este archivo
-```
 
----
+```plaintext│   │   │   ├── Proveedor.cs
 
-## ✨ Funcionalidades
+nextpapyros-backend-api/│   │   │   ├── OrdenCompra.cs
 
-### 🔐 Autenticación y Autorización
+├── src/│   │   │   ├── Recepcion.cs
+
+│   ├── NextPapyros.API/              # 🌐 Presentación│   │   │   ├── Venta.cs
+
+│   │   ├── Controllers/              # Endpoints REST│   │   │   ├── Devolucion.cs
+
+│   │   ├── Contracts/                # DTOs Request/Response│   │   │   ├── Usuario.cs
+
+│   │   ├── Startup/                  # DbSeeder│   │   │   ├── Rol.cs
+
+│   │   └── Program.cs                # Configuración│   │   │   └── ...
+
+│   ││   │   └── Repositories/             # Interfaces de repositorios
+
+│   ├── NextPapyros.Application/      # 📦 Aplicación│   │
+
+│   ││   └── NextPapyros.Infrastructure/   # 🔧 Capa de Infraestructura
+
+│   ├── NextPapyros.Domain/           # 🎯 Dominio│       ├── Auth/                     # Autenticación y seguridad
+
+│   │   ├── Entities/                 # Modelos de negocio│       ├── Persistence/              # DbContext y configuración EF
+
+│   │   └── Repositories/             # Interfaces│       ├── Repositories/             # Implementación de repositorios
+
+│   ││       └── Migrations/               # Migraciones de base de datos
+
+│   └── NextPapyros.Infrastructure/   # 🔧 Infraestructura│
+
+│       ├── Auth/                     # JWT, BCrypt├── NextPapyros.sln                   # Solución de Visual Studio
+
+│       ├── Persistence/              # DbContext└── README.md                         # Este archivo
+
+│       ├── Repositories/             # Implementaciones```
+
+│       └── Migrations/               # EF Migrations
+
+│---
+
+└── NextPapyros.sln
+
+```## ✨ Funcionalidades
+
+
+
+---### 🔐 Autenticación y Autorización
+
 - Sistema de autenticación basado en **JWT (JSON Web Tokens)**
-- Gestión de **usuarios, roles y permisos**
+
+## 🚀 Inicio Rápido- Gestión de **usuarios, roles y permisos**
+
 - Hashing seguro de contraseñas con **BCrypt**
-- Autorización basada en roles
 
-### 📦 Gestión de Inventario
-- Administración de **productos** (código, nombre, categoría, stock)
+### Requisitos- Autorización basada en roles
+
+
+
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)### 📦 Gestión de Inventario
+
+- SQL Server (Windows) o Docker (macOS/Linux)- Administración de **productos** (código, nombre, categoría, stock)
+
 - Control de **proveedores** y relación productos-proveedores
-- Registro de **movimientos de inventario**
 
-### 🛒 Compras y Recepciones
-- Creación y seguimiento de **órdenes de compra**
-- Gestión de **recepciones** de mercancía
-- Estados de órdenes: Pendiente, Confirmada, Recibida, Cancelada
+### Instalación Rápida- Registro de **movimientos de inventario**
 
-### 💰 Ventas
-- Registro de **ventas** con múltiples líneas
-- Soporte para diferentes **métodos de pago** (Efectivo, Tarjeta, Transferencia, etc.)
-- Estados de ventas: Confirmada, Anulada
 
-### 🔄 Devoluciones
-- Gestión de **devoluciones de ventas**
-- Control de líneas devueltas con cantidades
+
+```bash### 🛒 Compras y Recepciones
+
+# 1. Clonar repositorio- Creación y seguimiento de **órdenes de compra**
+
+git clone https://github.com/NextPapyros/nextpapyros-backend-api.git- Gestión de **recepciones** de mercancía
+
+cd nextpapyros-backend-api- Estados de órdenes: Pendiente, Confirmada, Recibida, Cancelada
+
+
+
+# 2. Configurar base de datos (Docker en macOS/Linux)### 💰 Ventas
+
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=ReplacePasswordHere" \- Registro de **ventas** con múltiples líneas
+
+  -p 1433:1433 --name sqlserver-nextpapyros \- Soporte para diferentes **métodos de pago** (Efectivo, Tarjeta, Transferencia, etc.)
+
+  -d mcr.microsoft.com/mssql/server:2019-latest- Estados de ventas: Confirmada, Anulada
+
+
+
+# 3. Aplicar migraciones### 🔄 Devoluciones
+
+cd src/NextPapyros.API- Gestión de **devoluciones de ventas**
+
+dotnet ef database update- Control de líneas devueltas con cantidades
+
 - Estados: Pendiente, Aprobada, Rechazada
 
-### 📊 Auditoría
-- **Log de operaciones** para trazabilidad
+# 4. Ejecutar
+
+dotnet run### 📊 Auditoría
+
+```- **Log de operaciones** para trazabilidad
+
 - Registro de acciones críticas del sistema
+
+**📖 Para instrucciones detalladas**, consulta **[CONTRIBUTING.md](CONTRIBUTING.md)**.
+
+---
 
 ---
 
 ## 📋 Requisitos Previos
 
+## 📚 Documentación API
+
 Antes de comenzar, asegúrate de tener instalado lo siguiente:
+
+### Swagger UI
 
 ### Requisitos Comunes (Todos los Sistemas Operativos)
 
+Accede a la documentación interactiva en:
+
 1. **.NET 8 SDK**
-   - Descarga: [https://dotnet.microsoft.com/download/dotnet/8.0](https://dotnet.microsoft.com/download/dotnet/8.0)
-   - Verifica la instalación:
+
+- **Desarrollo**: [http://localhost:5288/swagger](http://localhost:5288/swagger)   - Descarga: [https://dotnet.microsoft.com/download/dotnet/8.0](https://dotnet.microsoft.com/download/dotnet/8.0)
+
+- **HTTPS**: [https://localhost:7037/swagger](https://localhost:7037/swagger)   - Verifica la instalación:
+
      ```bash
-     dotnet --version
+
+### Autenticación     dotnet --version
+
      ```
-     Deberías ver algo como `8.0.x`
 
-2. **Git**
-   - Descarga: [https://git-scm.com/downloads](https://git-scm.com/downloads)
+1. **Login** con las credenciales por defecto:     Deberías ver algo como `8.0.x`
 
-3. **Editor de Código** (Recomendado)
-   - [Visual Studio 2022](https://visualstudio.microsoft.com/) (Windows/macOS)
-   - [Visual Studio Code](https://code.visualstudio.com/) (Todos los OS) + extensión C#
+   ```json
+
+   POST /auth/login2. **Git**
+
+   {   - Descarga: [https://git-scm.com/downloads](https://git-scm.com/downloads)
+
+     "email": "mail@mail.com",
+
+     "password": "mailPassword"3. **Editor de Código** (Recomendado)
+
+   }   - [Visual Studio 2022](https://visualstudio.microsoft.com/) (Windows/macOS)
+
+   ```   - [Visual Studio Code](https://code.visualstudio.com/) (Todos los OS) + extensión C#
+
    - [JetBrains Rider](https://www.jetbrains.com/rider/) (Todos los OS)
+
+2. **Copia el token** de la respuesta
 
 ### Requisitos Específicos según Sistema Operativo
 
+3. **Autoriza en Swagger**: Click en "Authorize" → `Bearer {tu-token}`
+
 #### Windows
-- **SQL Server 2019 o superior** (Express, Developer o Enterprise)
+
+### Endpoints Principales- **SQL Server 2019 o superior** (Express, Developer o Enterprise)
+
   - Descarga SQL Server: [https://www.microsoft.com/sql-server/sql-server-downloads](https://www.microsoft.com/sql-server/sql-server-downloads)
-  - Descarga SQL Server Management Studio (SSMS): [https://docs.microsoft.com/sql/ssms/download-sql-server-management-studio-ssms](https://docs.microsoft.com/sql/ssms/download-sql-server-management-studio-ssms)
 
-#### macOS / Linux
-- **Docker Desktop**
-  - macOS: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
-  - Linux: [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
+| Módulo | Endpoint | Método | Descripción |  - Descarga SQL Server Management Studio (SSMS): [https://docs.microsoft.com/sql/ssms/download-sql-server-management-studio-ssms](https://docs.microsoft.com/sql/ssms/download-sql-server-management-studio-ssms)
 
----
+|--------|----------|--------|-------------|
 
-## 🚀 Instalación y Configuración
+| **Auth** | `/auth/login` | POST | Iniciar sesión |#### macOS / Linux
 
-### 1. Clonar el Repositorio
+| **Auth** | `/auth/register` | POST | Registrar usuario (Admin) |- **Docker Desktop**
+
+| **Productos** | `/products` | GET | Listar productos |  - macOS: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
+
+| **Productos** | `/products` | POST | Crear producto |  - Linux: [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
+
+| **Productos** | `/products/{codigo}` | GET | Obtener producto |
+
+| **Ventas** | `/ventas` | POST | Registrar venta |---
+
+| **Ventas** | `/ventas/{id}` | GET | Consultar venta |
+
+| **Recepciones** | `/recepciones` | POST | Registrar recepción |## 🚀 Instalación y Configuración
+
+| **Reportes** | `/reportes/top-productos` | GET | Top productos vendidos |
+
+| **Reportes** | `/reportes/stock-bajo` | GET | Productos con stock bajo |### 1. Clonar el Repositorio
+
+| **Reportes** | `/reportes/ingresos-mensuales` | GET | Ingresos por mes |
 
 ```bash
-git clone https://github.com/NextPapyros/nextpapyros-backend-api.git
+
+---git clone https://github.com/NextPapyros/nextpapyros-backend-api.git
+
 cd nextpapyros-backend-api
-```
 
-### 2. Configuración de la Base de Datos
+## 👤 Usuario Administrador```
 
-Elige la opción según tu sistema operativo:
 
-#### Opción A: Windows (SQL Server Local)
 
-Si tienes SQL Server instalado localmente en Windows:
+Al iniciar la aplicación por primera vez, se crea automáticamente:### 2. Configuración de la Base de Datos
 
-1. **Asegúrate de que SQL Server esté ejecutándose**
+
+
+| Campo | Valor |Elige la opción según tu sistema operativo:
+
+|-------|-------|
+
+| Email | `mail@mail.com` |#### Opción A: Windows (SQL Server Local)
+
+| Password | `mailPassword` |
+
+| Rol | Administrador |Si tienes SQL Server instalado localmente en Windows:
+
+
+
+⚠️ **Cambia estas credenciales en producción**.1. **Asegúrate de que SQL Server esté ejecutándose**
+
    - Abre SQL Server Configuration Manager
-   - Verifica que el servicio SQL Server esté activo
 
-2. **Crea la base de datos** (Opcional - EF lo hará automáticamente)
+---   - Verifica que el servicio SQL Server esté activo
+
+
+
+## 🧪 Pruebas2. **Crea la base de datos** (Opcional - EF lo hará automáticamente)
+
    - Abre SQL Server Management Studio (SSMS)
-   - Conéctate a tu instancia local (generalmente `localhost` o `.\SQLEXPRESS`)
-   - La base de datos `NextPapyrosDb` se creará automáticamente al aplicar las migraciones
+
+```bash   - Conéctate a tu instancia local (generalmente `localhost` o `.\SQLEXPRESS`)
+
+# Ejecutar todas las pruebas   - La base de datos `NextPapyrosDb` se creará automáticamente al aplicar las migraciones
+
+dotnet test
 
 3. **Toma nota de tu cadena de conexión**
-   - Instancia por defecto: `Server=localhost;Database=NextPapyrosDb;Trusted_Connection=True;TrustServerCertificate=True;`
-   - SQL Server Express: `Server=localhost\SQLEXPRESS;Database=NextPapyrosDb;Trusted_Connection=True;TrustServerCertificate=True;`
+
+# Con cobertura   - Instancia por defecto: `Server=localhost;Database=NextPapyrosDb;Trusted_Connection=True;TrustServerCertificate=True;`
+
+dotnet test /p:CollectCoverage=true   - SQL Server Express: `Server=localhost\SQLEXPRESS;Database=NextPapyrosDb;Trusted_Connection=True;TrustServerCertificate=True;`
+
+```
 
 #### Opción B: macOS / Linux (Docker)
 
+---
+
 Si estás en macOS o Linux, usa Docker para ejecutar SQL Server:
 
+## 📖 Documentación Adicional
+
 1. **Asegúrate de que Docker esté instalado y ejecutándose**
-   ```bash
-   docker --version
-   # Deberías ver algo como: Docker version 24.x.x
+
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guía completa de instalación y configuración   ```bash
+
+- **[Swagger UI](http://localhost:5288/swagger)** - Documentación interactiva de la API   docker --version
+
+- **[Issues](https://github.com/NextPapyros/nextpapyros-backend-api/issues)** - Reportar bugs o solicitar features   # Deberías ver algo como: Docker version 24.x.x
+
    ```
+
+---
 
 2. **Ejecuta SQL Server en un contenedor Docker**
-   ```bash
-   docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Papyros2025/*" \
-     -p 1433:1433 --name sqlserver-nextpapyros \
+
+## 🤝 Contribuir   ```bash
+
+   docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=ReplaceYourPasswordHere" \
+
+¡Las contribuciones son bienvenidas! Por favor:     -p 1433:1433 --name sqlserver-nextpapyros \
+
      -d mcr.microsoft.com/mssql/server:2019-latest
-   ```
 
-   > **Nota sobre la contraseña**: La contraseña `Papyros2025/*` debe cumplir con los requisitos de SQL Server (mayúsculas, minúsculas, números y caracteres especiales). Puedes cambiarla, pero recuerda actualizarla en `appsettings.json`.
+1. Lee **[CONTRIBUTING.md](CONTRIBUTING.md)** para instrucciones detalladas   ```
 
-3. **Verifica que el contenedor esté ejecutándose**
-   ```bash
+2. Haz fork del proyecto
+
+3. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)   > **Nota sobre la contraseña**: La contraseña `***********` debe cumplir con los requisitos de SQL Server (mayúsculas, minúsculas, números y caracteres especiales). Puedes cambiarla, pero recuerda actualizarla en `appsettings.json`.
+
+4. Commit tus cambios (`git commit -m 'Add AmazingFeature'`)
+
+5. Push a la rama (`git push origin feature/AmazingFeature`)3. **Verifica que el contenedor esté ejecutándose**
+
+6. Abre un Pull Request   ```bash
+
    docker ps
-   ```
+
+### Estándares de Código   ```
+
    Deberías ver `sqlserver-nextpapyros` en la lista.
 
-4. **Comandos útiles de Docker**
-   ```bash
-   # Detener el contenedor
-   docker stop sqlserver-nextpapyros
+- ✅ Sigue los principios **SOLID**
 
-   # Iniciar el contenedor
+- ✅ Mantén la **separación de responsabilidades**4. **Comandos útiles de Docker**
+
+- ✅ Usa **nombres descriptivos** en inglés   ```bash
+
+- ✅ Añade **comentarios XML** para métodos públicos   # Detener el contenedor
+
+- ✅ Escribe **pruebas** para nuevas funcionalidades   docker stop sqlserver-nextpapyros
+
+
+
+---   # Iniciar el contenedor
+
    docker start sqlserver-nextpapyros
 
+## 🗺️ Roadmap
+
    # Ver logs del contenedor
-   docker logs sqlserver-nextpapyros
 
-   # Eliminar el contenedor (¡perderás los datos!)
-   docker rm -f sqlserver-nextpapyros
-   ```
+- [ ] Pruebas unitarias e integración   docker logs sqlserver-nextpapyros
 
-### 3. Configurar la Cadena de Conexión
+- [ ] Soporte para PostgreSQL
 
-Edita el archivo `src/NextPapyros.API/appsettings.json` o `appsettings.Development.json`:
+- [ ] Implementación de CQRS   # Eliminar el contenedor (¡perderás los datos!)
 
-**Para Windows (Autenticación de Windows):**
+- [ ] GraphQL API   docker rm -f sqlserver-nextpapyros
+
+- [ ] Eventos de dominio   ```
+
+- [ ] Cache distribuido con Redis
+
+- [ ] Frontend React/Angular### 3. Configurar la Cadena de Conexión
+
+- [ ] API de reportes avanzados
+
+- [ ] Internacionalización (i18n)Edita el archivo `src/NextPapyros.API/appsettings.json` o `appsettings.Development.json`:
+
+- [ ] Containerización completa
+
+- [ ] CI/CD con GitHub Actions**Para Windows (Autenticación de Windows):**
+
 ```json
-{
+
+---{
+
   "ConnectionStrings": {
-    "Default": "Server=localhost;Database=NextPapyrosDb;Trusted_Connection=True;TrustServerCertificate=True;"
+
+## 📄 Licencia    "Default": "Server=localhost;Database=NextPapyrosDb;Trusted_Connection=True;TrustServerCertificate=True;"
+
   }
-}
+
+Este proyecto está bajo la licencia MIT. Ver [LICENSE](LICENSE) para más detalles.}
+
 ```
+
+---
 
 **Para Windows (Autenticación SQL):**
-```json
-{
-  "ConnectionStrings": {
-    "Default": "Server=localhost;Database=NextPapyrosDb;User Id=sa;Password=TuPassword;TrustServerCertificate=True;"
-  }
-}
-```
 
-**Para macOS/Linux (Docker):**
-```json
+## 📞 Soporte```json
+
 {
-  "ConnectionStrings": {
-    "Default": "Server=localhost,1433;Database=NextPapyrosDb;User Id=sa;Password=Papyros2025/*;TrustServerCertificate=True;"
-  }
+
+- 🐛 **Bugs**: [GitHub Issues](https://github.com/NextPapyros/nextpapyros-backend-api/issues)  "ConnectionStrings": {
+
+- 💬 **Discusiones**: [GitHub Discussions](https://github.com/NextPapyros/nextpapyros-backend-api/discussions)    "Default": "Server=localhost;Database=NextPapyrosDb;User Id=sa;Password=TuPassword;TrustServerCertificate=True;"
+
+- 📧 **Email**: soporte@nextpapyros.com  }
+
 }
+
+---```
+
+
+
+<div align="center">**Para macOS/Linux (Docker):**
+
+```json
+
+**Hecho con ❤️ por el equipo de NextPapyros**{
+
+  "ConnectionStrings": {
+
+[⬆ Volver arriba](#-nextpapyros-backend-api)    "Default": "Server=localhost,1433;Database=NextPapyrosDb;User Id=sa;Password=ReplaceYourPasswordHere;TrustServerCertificate=True;"
+
+  }
+
+</div>}
+
 ```
 
 > ⚠️ **Importante**: No subas contraseñas reales a repositorios públicos. En producción, usa variables de entorno o servicios de gestión de secretos.
@@ -362,7 +621,7 @@ info: Microsoft.Hosting.Lifetime[14]
        container_name: nextpapyros-sqlserver
        environment:
          - ACCEPT_EULA=Y
-         - SA_PASSWORD=Papyros2025/*
+         - SA_PASSWORD=ReplaceYourPasswordHere
          - MSSQL_PID=Express
        ports:
          - "1433:1433"
@@ -432,8 +691,8 @@ Swagger te permite:
    - Cuerpo:
      ```json
      {
-       "email": "admin@admin.com",
-       "password": "Admin2025*"
+       "email": "mail@mail.com",
+       "password": "mailPassword"
      }
      ```
    - Respuesta:
@@ -473,8 +732,8 @@ El sistema crea automáticamente un usuario administrador al iniciar por primera
 
 | Campo | Valor |
 |-------|-------|
-| **Email** | `admin@admin.com` |
-| **Password** | `Admin2025*` |
+| **Email** | `mail@mail.com` |
+| **Password** | `mailPassword` |
 | **Rol** | Administrador |
 
 > ⚠️ **Seguridad**: Cambia estas credenciales en producción. Este usuario está destinado solo para desarrollo y pruebas.
@@ -581,7 +840,7 @@ dotnet tool update --global dotnet-ef
 1. Usa la emulación x86:
    ```bash
    docker run --platform linux/amd64 \
-     -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Papyros2025/*" \
+     -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=ReplaceYourPasswordHere" \
      -p 1433:1433 --name sqlserver-nextpapyros \
      -d mcr.microsoft.com/mssql/server:2019-latest
    ```
@@ -589,7 +848,7 @@ dotnet tool update --global dotnet-ef
 2. O considera usar Azure SQL Edge (compatible con ARM):
    ```bash
    docker run --cap-add SYS_PTRACE \
-     -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=Papyros2025/*" \
+     -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=ReplaceYourPasswordHere" \
      -p 1433:1433 --name sqlserver-nextpapyros \
      -d mcr.microsoft.com/azure-sql-edge
    ```
