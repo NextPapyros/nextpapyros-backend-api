@@ -23,6 +23,9 @@ public static class DependencyInjection
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IProductoRepository, ProductoRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IVentaRepository, VentaRepository>();
+        services.AddScoped<IRecepcionRepository, RecepcionRepository>();
+        services.AddScoped<IOrdenCompraRepository, OrdenCompraRepository>();
 
         // Auth section
         services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();

@@ -18,8 +18,30 @@ public class AuthController(
     ITokenService tokens
 ) : ControllerBase
 {
+    /// <summary>
+    /// Autentica un usuario y genera un token JWT.
+    /// </summary>
+    /// <param name="req">Credenciales de inicio de sesión (email y contraseña).</param>
+    /// <param name="ct">Token de cancelación.</param>
+    /// <returns>Token JWT y fecha de expiración.</returns>
+    /// <response code="200">Login exitoso. Retorna el token JWT.</response>
+    /// <response code="401">Credenciales inválidas o usuario inactivo.</response>
+    /// <remarks>
+    /// Ejemplo de request:
+    /// 
+    ///     POST /auth/login
+    ///     {
+    ///        "email": "mail@mail.com",
+    ///        "password": "Password123"
+    ///     }
+    ///     
+    /// El token retornado debe ser usado en el header Authorization:
+    /// `Authorization: Bearer {token}`
+    /// </remarks>
     [HttpPost("login")]
     [AllowAnonymous]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest req, CancellationToken ct)
     {
         var user = await users.GetByEmailAsync(req.Email, ct);
@@ -37,8 +59,35 @@ public class AuthController(
         return Ok(new LoginResponse(jwt, DateTime.UtcNow.AddHours(8)));
     }
 
+    /// <summary>
+    /// Registra un nuevo usuario en el sistema (solo administradores).
+    /// </summary>
+    /// <param name="req">Datos del nuevo usuario (nombre, email, contraseña, rol).</param>
+    /// <param name="ct">Token de cancelación.</param>
+    /// <returns>Resultado de la operación.</returns>
+    /// <response code="200">Usuario registrado exitosamente.</response>
+    /// <response code="403">El usuario no tiene permisos de administrador.</response>
+    /// <response code="409">El email ya está registrado en el sistema.</response>
+    /// <response code="404">El rol especificado no existe.</response>
+    /// <remarks>
+    /// **Requiere rol:** Administrador
+    /// 
+    /// Ejemplo de request:
+    /// 
+    ///     POST /auth/register
+    ///     {
+    ///        "nombre": "Juan Pérez",
+    ///        "email": "juan.perez@example.com",
+    ///        "password": "Password123*",
+    ///        "rol": "Empleado"
+    ///     }
+    /// </remarks>
     [HttpPost("register")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Register([FromBody] RegisterRequest req, CancellationToken ct)
     {
         if (!User.IsInRole("Admin"))
