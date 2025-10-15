@@ -191,7 +191,7 @@ Si Docker no está instalado, instálalo:
 **Opción A: Comando simple**
 
 ```bash
-docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=ReplaceYourPasswordHere" \
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Password123*" \
   -p 1433:1433 --name sqlserver-nextpapyros \
   -d mcr.microsoft.com/mssql/server:2019-latest
 ```
@@ -199,7 +199,7 @@ docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=ReplaceYourPasswordHere" \
 **Para Apple Silicon (M1/M2/M3):**
 ```bash
 docker run --platform linux/amd64 \
-  -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=ReplaceYourPasswordHere" \
+  -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Password123*" \
   -p 1433:1433 --name sqlserver-nextpapyros \
   -d mcr.microsoft.com/mssql/server:2019-latest
 ```
@@ -207,7 +207,7 @@ docker run --platform linux/amd64 \
 **Alternativa para Apple Silicon (Azure SQL Edge):**
 ```bash
 docker run --cap-add SYS_PTRACE \
-  -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=Papyros2025/*" \
+  -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=Password123*" \
   -p 1433:1433 --name sqlserver-nextpapyros \
   -d mcr.microsoft.com/azure-sql-edge
 ```
@@ -225,7 +225,7 @@ services:
     container_name: nextpapyros-sqlserver
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=ReplaceYourPasswordHere
+      - SA_PASSWORD=Password123*
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
@@ -281,7 +281,7 @@ Edita `src/NextPapyros.API/appsettings.Development.json`:
 ```json
 {
   "ConnectionStrings": {
-    "Default": "Server=localhost,1433;Database=NextPapyrosDb;User Id=sa;Password=ReplaceYourPasswordHere;TrustServerCertificate=True;"
+    "Default": "Server=localhost,1433;Database=NextPapyrosDb;User Id=sa;Password=Password123*;TrustServerCertificate=True;"
   }
 }
 ```
@@ -324,7 +324,7 @@ Done.
 - **Docker**: 
   ```bash
   docker exec -it sqlserver-nextpapyros /opt/mssql-tools/bin/sqlcmd \
-    -S localhost -U sa -P "Papyros2025/*" \
+    -S localhost -U sa -P "Password123*" \
     -Q "SELECT name FROM sys.databases WHERE name = 'NextPapyrosDb'"
   ```
 
@@ -381,7 +381,7 @@ curl http://localhost:5288/
 ```bash
 curl -X POST http://localhost:5288/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"mail@mail.com","password":"mailPassword"}'
+  -d '{"email":"mail@mail.com","password":"Password123*"}'
 ```
 
 ---
@@ -421,7 +421,7 @@ docker logs sqlserver-nextpapyros
 ```bash
 # Elimina y recrea el contenedor con una nueva contraseña
 docker rm -f sqlserver-nextpapyros
-docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=NuevaPassword123*" \
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Password123*" \
   -p 1433:1433 --name sqlserver-nextpapyros \
   -d mcr.microsoft.com/mssql/server:2019-latest
 
@@ -498,7 +498,7 @@ Si el contenedor SQL Server no inicia en Macs con chip Apple:
 **Opción 1: Emulación x86**
 ```bash
 docker run --platform linux/amd64 \
-  -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=ReplaceYourPasswordHere" \
+  -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Password123*" \
   -p 1433:1433 --name sqlserver-nextpapyros \
   -d mcr.microsoft.com/mssql/server:2019-latest
 ```
@@ -506,7 +506,7 @@ docker run --platform linux/amd64 \
 **Opción 2: Azure SQL Edge (Nativo ARM)**
 ```bash
 docker run --cap-add SYS_PTRACE \
-  -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=ReplaceYourPasswordHere" \
+  -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=Password123*" \
   -p 1433:1433 --name sqlserver-nextpapyros \
   -d mcr.microsoft.com/azure-sql-edge
 ```
