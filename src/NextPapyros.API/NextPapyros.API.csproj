@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NextPapyros.Application\NextPapyros.Application.csproj" />
     <ProjectReference Include="..\NextPapyros.Infrastructure\NextPapyros.Infrastructure.csproj" />
+    <ProjectReference Include="..\NextPapyros.Domain\NextPapyros.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
