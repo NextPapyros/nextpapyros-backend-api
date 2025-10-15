@@ -13,7 +13,8 @@ namespace NextPapyros.API.Controllers;
 [Route("ventas")]
 public class VentasController(
     IVentaRepository ventas,
-    NextPapyrosDbContext db
+    NextPapyrosDbContext db,
+    IUnitOfWork unitOfWork
 ) : ControllerBase
 {
     /// <summary>
@@ -79,55 +80,65 @@ public class VentasController(
                 return BadRequest($"Stock insuficiente para {p.Codigo} ({p.Nombre}). Disponible: {p.Stock}.");
         }
 
-        var venta = new Venta
+        try
         {
-            Fecha = DateTime.UtcNow,
-            MetodoPago = req.MetodoPago,
-            Estado = "CONFIRMADA",
-            Total = 0,
-            Lineas = new List<LineaVenta>()
-        };
+            await unitOfWork.BeginAsync(ct);
 
-        foreach (var l in req.Lineas)
-        {
-            var p = productosMap[l.ProductoCodigo];
-
-            var linea = new LineaVenta
-            {
-                ProductoCodigo = p.Codigo,
-                Producto = p,
-                Cantidad = l.Cantidad,
-                PrecioUnitario = l.PrecioUnitario,
-                Subtotal = l.Cantidad * l.PrecioUnitario
-            };
-            venta.Lineas.Add(linea);
-
-            p.Stock -= l.Cantidad;
-            db.MovimientosInventario.Add(new MovimientoInventario
+            var venta = new Venta
             {
                 Fecha = DateTime.UtcNow,
-                Tipo = TipoMov.SALIDA,
-                Cantidad = l.Cantidad,
-                Motivo = $"VENTA #{venta.Id}",
-                ProductoCodigo = p.Codigo
-            });
+                MetodoPago = req.MetodoPago,
+                Estado = "CONFIRMADA",
+                Total = 0,
+                Lineas = new List<LineaVenta>()
+            };
 
-            db.Productos.Update(p);
+            foreach (var l in req.Lineas)
+            {
+                var p = productosMap[l.ProductoCodigo];
+
+                var linea = new LineaVenta
+                {
+                    ProductoCodigo = p.Codigo,
+                    Producto = p,
+                    Cantidad = l.Cantidad,
+                    PrecioUnitario = l.PrecioUnitario,
+                    Subtotal = l.Cantidad * l.PrecioUnitario
+                };
+                venta.Lineas.Add(linea);
+
+                p.Stock -= l.Cantidad;
+                db.MovimientosInventario.Add(new MovimientoInventario
+                {
+                    Fecha = DateTime.UtcNow,
+                    Tipo = TipoMov.SALIDA,
+                    Cantidad = l.Cantidad,
+                    Motivo = $"VENTA #{venta.Id}",
+                    ProductoCodigo = p.Codigo
+                });
+
+                db.Productos.Update(p);
+            }
+
+            venta.Total = venta.Lineas.Sum(x => x.Subtotal);
+
+            await ventas.AddAsync(venta, ct);
+            await unitOfWork.CommitAsync(ct);
+
+            var res = new VentaResponse(
+                venta.Id, venta.Fecha, venta.Total, venta.Estado, venta.MetodoPago,
+                venta.Lineas.Select(li => new VentaLineaItem(
+                    li.Id, li.ProductoCodigo, productosMap[li.ProductoCodigo].Nombre, li.Cantidad, li.PrecioUnitario, li.Subtotal
+                ))
+            );
+
+            return CreatedAtAction(nameof(Obtener), new { id = venta.Id }, res);
         }
-
-        venta.Total = venta.Lineas.Sum(x => x.Subtotal);
-
-        await ventas.AddAsync(venta, ct);
-        await ventas.SaveChangesAsync(ct);
-
-        var res = new VentaResponse(
-            venta.Id, venta.Fecha, venta.Total, venta.Estado, venta.MetodoPago,
-            venta.Lineas.Select(li => new VentaLineaItem(
-                li.Id, li.ProductoCodigo, productosMap[li.ProductoCodigo].Nombre, li.Cantidad, li.PrecioUnitario, li.Subtotal
-            ))
-        );
-
-        return CreatedAtAction(nameof(Obtener), new { id = venta.Id }, res);
+        catch (Exception)
+        {
+            await unitOfWork.RollbackAsync(ct);
+            throw;
+        }
     }
 
     [HttpGet("{id:int}")]

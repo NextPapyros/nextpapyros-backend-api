@@ -14,7 +14,8 @@ namespace NextPapyros.API.Controllers;
 public class RecepcionesController(
     IRecepcionRepository recepciones,
     IOrdenCompraRepository ordenes,
-    NextPapyrosDbContext db
+    NextPapyrosDbContext db,
+    IUnitOfWork unitOfWork
 ) : ControllerBase
 {
     /// <summary>
@@ -83,50 +84,60 @@ public class RecepcionesController(
             if (l.CantidadRecibida <= 0) return BadRequest("Cantidad debe ser > 0.");
         }
 
-        var r = new Recepcion
+        try
         {
-            Fecha = DateTime.UtcNow,
-            NroFacturaGuia = req.NroFacturaGuia,
-            OrdenCompraId = oc.Id,
-            OrdenCompra = oc,
-            Lineas = new List<LineaRecepcion>()
-        };
+            await unitOfWork.BeginAsync(ct);
 
-        foreach (var l in req.Lineas)
-        {
-            var p = productos[l.ProductoCodigo];
-
-            r.Lineas.Add(new LineaRecepcion
-            {
-                ProductoCodigo = p.Codigo,
-                Producto = p,
-                CantidadRecibida = l.CantidadRecibida
-            });
-
-            p.Stock += l.CantidadRecibida;
-            db.MovimientosInventario.Add(new MovimientoInventario
+            var r = new Recepcion
             {
                 Fecha = DateTime.UtcNow,
-                Tipo = TipoMov.ENTRADA,
-                Cantidad = l.CantidadRecibida,
-                Motivo = $"RECEPCION OC #{oc.Id} - {req.NroFacturaGuia}",
-                ProductoCodigo = p.Codigo
-            });
+                NroFacturaGuia = req.NroFacturaGuia,
+                OrdenCompraId = oc.Id,
+                OrdenCompra = oc,
+                Lineas = new List<LineaRecepcion>()
+            };
 
-            db.Productos.Update(p);
+            foreach (var l in req.Lineas)
+            {
+                var p = productos[l.ProductoCodigo];
+
+                r.Lineas.Add(new LineaRecepcion
+                {
+                    ProductoCodigo = p.Codigo,
+                    Producto = p,
+                    CantidadRecibida = l.CantidadRecibida
+                });
+
+                p.Stock += l.CantidadRecibida;
+                db.MovimientosInventario.Add(new MovimientoInventario
+                {
+                    Fecha = DateTime.UtcNow,
+                    Tipo = TipoMov.ENTRADA,
+                    Cantidad = l.CantidadRecibida,
+                    Motivo = $"RECEPCION OC #{oc.Id} - {req.NroFacturaGuia}",
+                    ProductoCodigo = p.Codigo
+                });
+
+                db.Productos.Update(p);
+            }
+
+            await recepciones.AddAsync(r, ct);
+            await unitOfWork.CommitAsync(ct);
+
+            var res = new RecepcionResponse(
+                r.Id, r.Fecha, r.OrdenCompraId, r.NroFacturaGuia,
+                r.Lineas.Select(li => new RecepcionLineaItem(
+                    li.Id, li.ProductoCodigo, productos[li.ProductoCodigo].Nombre, li.CantidadRecibida
+                ))
+            );
+
+            return CreatedAtAction(nameof(Obtener), new { id = r.Id }, res);
         }
-
-        await recepciones.AddAsync(r, ct);
-        await recepciones.SaveChangesAsync(ct);
-
-        var res = new RecepcionResponse(
-            r.Id, r.Fecha, r.OrdenCompraId, r.NroFacturaGuia,
-            r.Lineas.Select(li => new RecepcionLineaItem(
-                li.Id, li.ProductoCodigo, productos[li.ProductoCodigo].Nombre, li.CantidadRecibida
-            ))
-        );
-
-        return CreatedAtAction(nameof(Obtener), new { id = r.Id }, res);
+        catch (Exception)
+        {
+            await unitOfWork.RollbackAsync(ct);
+            throw;
+        }
     }
 
     [HttpGet("{id:int}")]
