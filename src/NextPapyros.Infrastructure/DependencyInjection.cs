@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NextPapyros.Application.Reports;
 using NextPapyros.Domain.Repositories;
 using NextPapyros.Infrastructure.Auth;
 using NextPapyros.Infrastructure.Persistence;
+using NextPapyros.Infrastructure.Reports;
 using NextPapyros.Infrastructure.Repositories;
 
 namespace NextPapyros.Infrastructure;
@@ -26,6 +28,9 @@ public static class DependencyInjection
         services.AddScoped<IVentaRepository, VentaRepository>();
         services.AddScoped<IRecepcionRepository, RecepcionRepository>();
         services.AddScoped<IOrdenCompraRepository, OrdenCompraRepository>();
+        services.AddScoped<IReporteRepository, ReporteRepository>();
+        services.AddScoped<IReportExporter, CsvReportExporter>();
+        services.AddScoped<IReportExporter, PdfReportExporter>();
 
         // Auth section
         services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();

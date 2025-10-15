@@ -149,4 +149,125 @@ public class VentasController(
         );
         return Ok(res);
     }
+
+    /// <summary>
+    /// Busca productos activos para agregar a una venta en el punto de venta.
+    /// </summary>
+    /// <param name="q">Término de búsqueda (código o nombre del producto).</param>
+    /// <param name="ct">Token de cancelación.</param>
+    /// <returns>Lista de productos activos con stock, precio y disponibilidad.</returns>
+    /// <response code="200">Lista de productos encontrados (puede estar vacía).</response>
+    /// <response code="401">No autenticado.</response>
+    /// <remarks>
+    /// 
+    /// Ejemplos de request:
+    /// 
+    ///     GET /ventas/pos/buscar?q=lapicero
+    ///     GET /ventas/pos/buscar?q=PROD001
+    ///     
+    /// **Reglas de negocio aplicadas:**
+    /// - Solo productos activos son retornados
+    /// - Incluye stock disponible para validación en el frontend
+    /// - Precio cargado automáticamente desde el catálogo
+    /// - Búsqueda insensible a mayúsculas/minúsculas
+    /// - Búsqueda por código exacto o nombre parcial
+    /// </remarks>
+    [HttpGet("pos/buscar")]
+    [Authorize]
+    [ProducesResponseType(typeof(IEnumerable<ProductoPosResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<IEnumerable<ProductoPosResponse>>> BuscarProductosPos(
+        [FromQuery] string q,
+        CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+            return Ok(Array.Empty<ProductoPosResponse>());
+
+        var productos = await db.Productos
+            .AsNoTracking()
+            .Where(p => p.Activo && (p.Codigo.Contains(q) || p.Nombre.Contains(q)))
+            .OrderBy(p => p.Nombre)
+            .Take(20) // Limitar resultados para performance
+            .Select(p => new ProductoPosResponse(
+                p.Codigo,
+                p.Nombre,
+                p.Categoria,
+                p.Precio,
+                p.Stock
+            ))
+            .ToListAsync(ct);
+
+        return Ok(productos);
+    }
+
+    /// <summary>
+    /// Valida que un producto puede ser agregado a la venta.
+    /// Verifica stock, estado activo y retorna precio del catálogo.
+    /// </summary>
+    /// <param name="req">Código del producto y cantidad solicitada.</param>
+    /// <param name="ct">Token de cancelación.</param>
+    /// <returns>Información del producto validado con subtotal calculado.</returns>
+    /// <response code="200">Producto validado correctamente, puede agregarse a la venta.</response>
+    /// <response code="400">Producto inactivo, sin stock suficiente, o no existe.</response>
+    /// <response code="401">No autenticado.</response>
+    /// <remarks>
+    /// - Valida stock suficiente antes de agregar
+    /// - Muestra alerta si stock insuficiente
+    /// - No permite agregar productos inactivos
+    /// 
+    /// Ejemplo de request:
+    /// 
+    ///     POST /ventas/pos/validar-producto
+    ///     {
+    ///        "productoCodigo": "PROD001",
+    ///        "cantidad": 5
+    ///     }
+    ///     
+    /// **Reglas de negocio:**
+    /// - Solo productos activos pueden agregarse
+    /// - Cantidad debe ser &gt; 0 y &lt;= stock disponible
+    /// - Precio cargado automáticamente (no modificable por empleado)
+    /// - Stock no se modifica hasta confirmar la venta
+    /// 
+    /// **Respuestas de error:**
+    /// - "Producto no encontrado o inactivo"
+    /// - "Stock insuficiente. Disponible: X"
+    /// - "Cantidad debe ser mayor a 0"
+    /// </remarks>
+    [HttpPost("pos/validar-producto")]
+    [Authorize]
+    [ProducesResponseType(typeof(ProductoAgregadoResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<ProductoAgregadoResponse>> ValidarProductoParaVenta(
+        [FromBody] AgregarProductoRequest req,
+        CancellationToken ct)
+    {
+        if (req.Cantidad <= 0)
+            return BadRequest("Cantidad debe ser mayor a 0.");
+
+        var producto = await db.Productos
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Codigo == req.ProductoCodigo && p.Activo, ct);
+
+        if (producto is null)
+            return BadRequest("Producto no encontrado o inactivo.");
+
+        if (producto.Stock < req.Cantidad)
+            return BadRequest($"Stock insuficiente. Disponible: {producto.Stock} unidades.");
+
+        var subtotal = req.Cantidad * producto.Precio;
+        var stockRestante = producto.Stock - req.Cantidad;
+
+        var response = new ProductoAgregadoResponse(
+            producto.Codigo,
+            producto.Nombre,
+            req.Cantidad,
+            producto.Precio,
+            subtotal,
+            stockRestante
+        );
+
+        return Ok(response);
+    }
 }
