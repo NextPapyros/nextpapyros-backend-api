@@ -1,6 +1,6 @@
 # 🚀 Guía de Contribución - NextPapyros Backend API
 
-¡Gracias por tu interés en contribuir a NextPapyros! Esta guía te ayudará a configurar el proyecto en tu máquina local, independientemente del sistema operativo que uses.
+¡Gracias por tu interés en contribuir a NextPapyros! Esta guía te ayudará a configurar el proyecto localmente.
 
 ---
 
@@ -8,73 +8,37 @@
 
 - [Requisitos Previos](#-requisitos-previos)
 - [Instalación y Configuración](#-instalación-y-configuración)
-- [Configuración por Sistema Operativo](#-configuración-por-sistema-operativo)
+- [Configuración de Base de Datos](#-configuración-de-base-de-datos)
+- [Migraciones](#-migraciones)
+- [Ejecutar el Proyecto](#-ejecutar-el-proyecto)
+- [Estructura y Patrones](#-estructura-y-patrones)
+- [Guía de Desarrollo](#-guía-de-desarrollo)
 - [Troubleshooting](#-troubleshooting)
-- [Guías de Desarrollo](#-guías-de-desarrollo)
-- [Proceso de Contribución](#-proceso-de-contribución)
 
 ---
 
 ## 📋 Requisitos Previos
 
-### Requisitos Comunes (Todos los Sistemas Operativos)
+### Requisitos Obligatorios
 
-#### 1. .NET 8 SDK
+1. **[.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)**
+   ```bash
+   dotnet --version  # Debe mostrar 8.0.x
+   ```
 
-Descarga e instala desde: [https://dotnet.microsoft.com/download/dotnet/8.0](https://dotnet.microsoft.com/download/dotnet/8.0)
+2. **[Git](https://git-scm.com/downloads)**
+   ```bash
+   git --version
+   ```
 
-**Verificar instalación:**
-```bash
-dotnet --version
-# Deberías ver: 8.0.x
-```
+3. **Base de Datos** (elige una):
+   - **Windows**: SQL Server 2019+ o SQL Server Express
+   - **macOS/Linux**: Docker con SQL Server o Azure SQL Edge
 
-#### 2. Git
-
-Descarga desde: [https://git-scm.com/downloads](https://git-scm.com/downloads)
-
-**Verificar instalación:**
-```bash
-git --version
-```
-
-#### 3. Editor de Código (Elige uno)
-
-- **Visual Studio 2022** (Recomendado para Windows)
-  - Descarga: [https://visualstudio.microsoft.com/](https://visualstudio.microsoft.com/)
-  - Instala el workload "ASP.NET and web development"
-
-- **Visual Studio Code** (Multiplataforma)
-  - Descarga: [https://code.visualstudio.com/](https://code.visualstudio.com/)
-  - Extensiones recomendadas:
-    - C# Dev Kit
-    - C#
-    - NuGet Package Manager
-
-- **JetBrains Rider** (Multiplataforma, de pago)
-  - Descarga: [https://www.jetbrains.com/rider/](https://www.jetbrains.com/rider/)
-
----
-
-### Requisitos Específicos por Sistema Operativo
-
-#### Windows
-
-**SQL Server 2019 o superior** (Express es gratuito)
-- Descarga SQL Server: [https://www.microsoft.com/sql-server/sql-server-downloads](https://www.microsoft.com/sql-server/sql-server-downloads)
-- Descarga SSMS (SQL Server Management Studio): [https://docs.microsoft.com/sql/ssms/download-sql-server-management-studio-ssms](https://docs.microsoft.com/sql/ssms/download-sql-server-management-studio-ssms)
-
-#### macOS / Linux
-
-**Docker Desktop**
-- macOS: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
-- Linux: [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
-
-**Verificar Docker:**
-```bash
-docker --version
-# Deberías ver: Docker version 24.x.x o superior
-```
+4. **Editor de Código** (elige uno):
+   - Visual Studio 2022 (Windows, recomendado)
+   - Visual Studio Code + C# Dev Kit (multiplataforma)
+   - JetBrains Rider (multiplataforma)
 
 ---
 
@@ -83,85 +47,25 @@ docker --version
 ### Paso 1: Clonar el Repositorio
 
 ```bash
-# Clonar el repositorio
 git clone https://github.com/NextPapyros/nextpapyros-backend-api.git
-
-# Entrar al directorio
 cd nextpapyros-backend-api
 ```
 
 ### Paso 2: Restaurar Dependencias
 
 ```bash
-# Restaurar paquetes NuGet
 dotnet restore
 ```
 
 ---
 
-### Paso 3: Configuración de la Base de Datos
+## 💾 Configuración de Base de Datos
 
-**Elige la opción según tu sistema operativo:**
+### Opción A: Windows (SQL Server Local)
 
-<details>
-<summary><b>🪟 Opción A: Windows (SQL Server Local)</b></summary>
+1. **Instalar SQL Server Express**: [Descargar aquí](https://www.microsoft.com/sql-server/sql-server-downloads)
+2. **Configurar cadena de conexión** en `src/NextPapyros.API/appsettings.Development.json`:
 
-#### 1. Instalar SQL Server Express
-
-1. Descarga [SQL Server 2019 Express](https://www.microsoft.com/sql-server/sql-server-downloads)
-2. Ejecuta el instalador
-3. Selecciona instalación "Basic" o "Custom"
-4. Toma nota del nombre de la instancia (ejemplo: `SQLEXPRESS`)
-
-#### 2. Instalar SQL Server Management Studio (SSMS)
-
-1. Descarga [SSMS](https://docs.microsoft.com/sql/ssms/download-sql-server-management-studio-ssms)
-2. Instala siguiendo el asistente
-3. Abre SSMS y conéctate a tu instancia local
-
-#### 3. Verificar que SQL Server esté ejecutándose
-
-**Opción A: Administrador de Servicios**
-- Presiona `Win + R`, escribe `services.msc`
-- Busca "SQL Server (MSSQLSERVER)" o "SQL Server (SQLEXPRESS)"
-- Asegúrate de que esté "En ejecución"
-
-**Opción B: PowerShell**
-```powershell
-# Ejecutar como Administrador
-Get-Service | Where-Object {$_.Name -like "*SQL*"}
-```
-
-#### 4. Habilitar TCP/IP (si es necesario)
-
-1. Abre "SQL Server Configuration Manager"
-2. Ve a "SQL Server Network Configuration" > "Protocols for [TU_INSTANCIA]"
-3. Habilita "TCP/IP"
-4. Reinicia el servicio SQL Server
-
-#### 5. Configurar Cadena de Conexión
-
-Edita `src/NextPapyros.API/appsettings.Development.json`:
-
-**Con Autenticación de Windows (Recomendado):**
-```json
-{
-  "ConnectionStrings": {
-    "Default": "Server=localhost;Database=NextPapyrosDb;Trusted_Connection=True;TrustServerCertificate=True;"
-  }
-}
-```
-
-**Con Autenticación SQL:**
-```json
-{
-  "ConnectionStrings": {
-    "Default": "Server=localhost;Database=NextPapyrosDb;User Id=sa;Password=TuPasswordSeguro123*;TrustServerCertificate=True;"
-  }
-}
-```
-
-**Para SQL Server Express:**
 ```json
 {
   "ConnectionStrings": {
@@ -170,84 +74,265 @@ Edita `src/NextPapyros.API/appsettings.Development.json`:
 }
 ```
 
-</details>
+### Opción B: macOS/Linux (Docker)
 
-<details>
-<summary><b>🍎 Opción B: macOS / Linux (Docker)</b></summary>
-
-#### 1. Asegúrate de que Docker esté ejecutándose
+1. **Ejecutar SQL Server en contenedor**:
 
 ```bash
-docker --version
-# Deberías ver: Docker version 24.x.x
-```
-
-Si Docker no está instalado, instálalo:
-- macOS: [Docker Desktop para Mac](https://www.docker.com/products/docker-desktop)
-- Linux: [Docker Engine](https://docs.docker.com/engine/install/)
-
-#### 2. Ejecutar SQL Server en Docker
-
-**Opción A: Comando simple**
-
-```bash
+# Intel/AMD
 docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Password123*" \
   -p 1433:1433 --name sqlserver-nextpapyros \
   -d mcr.microsoft.com/mssql/server:2019-latest
-```
 
-**Para Apple Silicon (M1/M2/M3):**
-```bash
+# Apple Silicon (M1/M2/M3)
 docker run --platform linux/amd64 \
   -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Password123*" \
   -p 1433:1433 --name sqlserver-nextpapyros \
   -d mcr.microsoft.com/mssql/server:2019-latest
 ```
 
-**Alternativa para Apple Silicon (Azure SQL Edge):**
-```bash
-docker run --cap-add SYS_PTRACE \
-  -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=Password123*" \
-  -p 1433:1433 --name sqlserver-nextpapyros \
-  -d mcr.microsoft.com/azure-sql-edge
+2. **Configurar cadena de conexión** en `src/NextPapyros.API/appsettings.Development.json`:
+
+```json
+{
+  "ConnectionStrings": {
+    "Default": "Server=localhost,1433;Database=NextPapyrosDb;User Id=sa;Password=Password123*;TrustServerCertificate=True;"
+  }
+}
 ```
 
-**Opción B: Docker Compose (Recomendado)**
+---
 
-Crea un archivo `docker-compose.yml` en la raíz del proyecto:
+## 🔄 Migraciones
 
-```yaml
-version: '3.8'
-
-services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: nextpapyros-sqlserver
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=Password123*
-      - MSSQL_PID=Express
-    ports:
-      - "1433:1433"
-    volumes:
-      - sqlserver-data:/var/opt/mssql
-    restart: unless-stopped
-
-volumes:
-  sqlserver-data:
-```
-
-Luego ejecuta:
-```bash
-docker-compose up -d
-```
-
-#### 3. Verificar que el contenedor esté ejecutándose
+### Aplicar Migraciones a la Base de Datos
 
 ```bash
+cd src/NextPapyros.API
+dotnet ef database update
+```
+
+### Crear Nueva Migración (solo si modificas entidades)
+
+```bash
+dotnet ef migrations add NombreDeLaMigracion \
+  --project ../NextPapyros.Infrastructure \
+  --startup-project .
+```
+
+---
+
+## ▶️ Ejecutar el Proyecto
+
+```bash
+cd src/NextPapyros.API
+dotnet run
+```
+
+Accede a:
+- **Swagger**: http://localhost:5288/swagger
+- **HTTPS**: https://localhost:7037/swagger
+
+### Usuario por Defecto
+
+El sistema crea automáticamente un usuario administrador:
+
+| Campo | Valor |
+|-------|-------|
+| Email | `mail@mail.com` |
+| Password | `Password123*` |
+| Rol | Administrador |
+
+---
+
+## 🏗️ Estructura y Patrones
+
+### Capas del Proyecto
+
+```
+NextPapyros.API           → Controladores, DTOs, Configuración
+NextPapyros.Application   → Interfaces de casos de uso
+NextPapyros.Domain        → Entidades, Interfaces de repositorios
+NextPapyros.Infrastructure → Implementaciones, DbContext, Migrations
+```
+
+### Patrones Implementados
+
+| Patrón | Ubicación | Propósito |
+|--------|-----------|-----------|
+| **Repository** | `Domain/Repositories` + `Infrastructure/Repositories` | Abstracción de acceso a datos |
+| **Unit of Work** | `Infrastructure/Persistence/UnitOfWork.cs` | Transacciones atómicas |
+| **Dependency Injection** | `Infrastructure/DependencyInjection.cs` | Inversión de control |
+| **Strategy** | `Application/Reports/IReportExporter` | Exportación dinámica de reportes |
+
+---
+
+## 📝 Guía de Desarrollo
+
+### Crear un Nuevo Endpoint
+
+#### 1. Definir el Contrato (DTO)
+
+```csharp
+// src/NextPapyros.API/Contracts/MiModulo/MiContracts.cs
+public record CrearEntidadRequest(string Nombre, string Descripcion);
+public record EntidadResponse(int Id, string Nombre, string Descripcion);
+```
+
+#### 2. Crear la Interfaz del Repositorio
+
+```csharp
+// src/NextPapyros.Domain/Repositories/IEntidadRepository.cs
+public interface IEntidadRepository
+{
+    Task<Entidad?> GetByIdAsync(int id, CancellationToken ct = default);
+    Task AddAsync(Entidad entidad, CancellationToken ct = default);
+    Task SaveChangesAsync(CancellationToken ct = default);
+}
+```
+
+#### 3. Implementar el Repositorio
+
+```csharp
+// src/NextPapyros.Infrastructure/Repositories/EntidadRepository.cs
+public class EntidadRepository(NextPapyrosDbContext db) : IEntidadRepository
+{
+    public Task<Entidad?> GetByIdAsync(int id, CancellationToken ct = default) =>
+        db.Entidades.FirstOrDefaultAsync(e => e.Id == id, ct);
+    
+    public async Task AddAsync(Entidad entidad, CancellationToken ct = default) =>
+        await db.Entidades.AddAsync(entidad, ct);
+}
+```
+
+#### 4. Registrar en DI
+
+```csharp
+// src/NextPapyros.Infrastructure/DependencyInjection.cs
+services.AddScoped<IEntidadRepository, EntidadRepository>();
+```
+
+#### 5. Crear el Controlador
+
+```csharp
+// src/NextPapyros.API/Controllers/EntidadesController.cs
+[ApiController]
+[Route("entidades")]
+public class EntidadesController(
+    IEntidadRepository repo,
+    IUnitOfWork unitOfWork) : ControllerBase
+{
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<EntidadResponse>> Crear(
+        [FromBody] CrearEntidadRequest req, 
+        CancellationToken ct)
+    {
+        try
+        {
+            await unitOfWork.BeginAsync(ct);
+            
+            var entidad = new Entidad 
+            { 
+                Nombre = req.Nombre,
+                Descripcion = req.Descripcion 
+            };
+            
+            await repo.AddAsync(entidad, ct);
+            await unitOfWork.CommitAsync(ct);
+            
+            return CreatedAtAction(nameof(Obtener), 
+                new { id = entidad.Id }, 
+                new EntidadResponse(entidad.Id, entidad.Nombre, entidad.Descripcion));
+        }
+        catch
+        {
+            await unitOfWork.RollbackAsync(ct);
+            throw;
+        }
+    }
+}
+```
+
+### Validaciones de Negocio
+
+✅ **Validar antes de iniciar transacción**:
+```csharp
+if (string.IsNullOrWhiteSpace(req.Nombre))
+    return BadRequest("El nombre es obligatorio.");
+
+// Validar duplicados
+var existente = await repo.GetByNombreAsync(req.Nombre, ct);
+if (existente is not null)
+    return Conflict("Ya existe una entidad con ese nombre.");
+```
+
+### Usar Unit of Work para Operaciones Complejas
+
+Usa `IUnitOfWork` cuando necesites:
+- ✅ Crear/actualizar múltiples entidades
+- ✅ Modificar stock de inventario
+- ✅ Registrar movimientos o logs
+- ✅ Garantizar atomicidad (todo o nada)
+
+**NO uses** Unit of Work para:
+- ❌ Consultas simples (GET)
+- ❌ Operaciones de una sola entidad sin relaciones
+
+---
+
+## 🐛 Troubleshooting
+
+### Error: "Cannot connect to SQL Server"
+
+**Windows**:
+```bash
+# Verificar que SQL Server esté ejecutándose
+Get-Service | Where-Object {$_.Name -like "*SQL*"}
+```
+
+**macOS/Linux**:
+```bash
+# Verificar contenedor Docker
 docker ps
+docker logs sqlserver-nextpapyros
+```
 
-# Deberías ver algo como:
+### Error: "Login failed for user"
+
+Verifica la cadena de conexión en `appsettings.Development.json` y que la contraseña sea correcta.
+
+### Error al aplicar migraciones
+
+```bash
+# Eliminar base de datos y recrear
+dotnet ef database drop --force
+dotnet ef database update
+```
+
+### Puerto en uso
+
+Cambia el puerto en `src/NextPapyros.API/Properties/launchSettings.json`:
+```json
+"applicationUrl": "https://localhost:7037;http://localhost:5288"
+```
+
+---
+
+## 📚 Recursos Adicionales
+
+- **[Documentación de .NET 8](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8)**
+- **[Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/)**
+- **[ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/)**
+- **[Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)**
+
+---
+
+<div align="center">
+
+**¿Preguntas?** Abre un [Issue](https://github.com/NextPapyros/nextpapyros-backend-api/issues) o contacta al equipo.
+
+</div>
 # CONTAINER ID   IMAGE                                        STATUS
 # abc123def456   mcr.microsoft.com/mssql/server:2019-latest   Up 2 minutes
 ```

@@ -1,18 +1,20 @@
 # 🧩 NextPapyros Backend API
 
-Sistema de gestión empresarial para **inventario, ventas, compras, recepciones y devoluciones**, desarrollado con **.NET 8** siguiendo los principios de **Clean Architecture** y **SOLID**.
+Sistema de gestión empresarial para **inventario, ventas, compras, recepciones y proveedores**, desarrollado con **.NET 8** siguiendo los principios de **Clean Architecture** y **SOLID**.
 
 ---
 
 ## 🚀 Características Principales
 
 - 🔐 **Autenticación JWT** con sistema de roles y permisos
-- 📦 **Gestión de Inventario** con control de stock y alertas
+- 📦 **Gestión de Inventario** con control de stock y movimientos
+- 🏢 **Gestión de Proveedores** con validación de duplicados
 - 🛒 **Órdenes de Compra** y recepciones de mercancía
-- 💰 **Registro de Ventas** con múltiples métodos de pago
+- 💰 **Registro de Ventas** con actualización automática de stock
 - 🔄 **Devoluciones** con trazabilidad completa
-- 📊 **Reportes y Analytics** (top productos, stock bajo, ingresos mensuales)
+- 📊 **Reportes** exportables a CSV/PDF (top productos, stock bajo, ingresos mensuales)
 - 📝 **Auditoría** con logs de operaciones
+- 🔒 **Transacciones atómicas** con patrón Unit of Work
 
 ---
 
@@ -35,22 +37,22 @@ El proyecto sigue **Clean Architecture** con separación en capas:
 
 ```plaintext
 ┌─────────────────────────────────────────┐
-│         NextPapyros.API                 │  ← Capa de Presentación
+│         NextPapyros.API                 │  ← Presentación
 │  (Controllers, DTOs, Middleware)        │
 └─────────────────────────────────────────┘
                   ↓
 ┌─────────────────────────────────────────┐
-│      NextPapyros.Application            │  ← Capa de Aplicación
-│      (Casos de Uso, Services)           │
+│      NextPapyros.Application            │  ← Aplicación
+│      (Interfaces, Use Cases)            │
 └─────────────────────────────────────────┘
                   ↓
 ┌─────────────────────────────────────────┐
-│        NextPapyros.Domain               │  ← Capa de Dominio
+│        NextPapyros.Domain               │  ← Dominio
 │  (Entities, Interfaces, Lógica)         │
 └─────────────────────────────────────────┘
                   ↑
 ┌─────────────────────────────────────────┐
-│     NextPapyros.Infrastructure          │  ← Capa de Infraestructura
+│     NextPapyros.Infrastructure          │  ← Infraestructura
 │  (EF Core, Repos, Auth, Migrations)     │
 └─────────────────────────────────────────┘
 ```
@@ -58,9 +60,10 @@ El proyecto sigue **Clean Architecture** con separación en capas:
 ### Patrones Implementados
 
 - **Repository Pattern**: Abstracción de acceso a datos
-- **Unit of Work**: Gestión de transacciones
-- **Dependency Injection**: Inversión de dependencias
-- **Domain Services**: Lógica de negocio compleja
+- **Unit of Work**: Gestión de transacciones atómicas
+- **Dependency Injection**: Inversión de control con ASP.NET Core IoC
+- **Strategy Pattern**: Exportación dinámica de reportes (CSV, PDF)
+- **Singleton Pattern**: Servicios stateless (Auth, Hashing)
 
 ---
 
@@ -70,21 +73,41 @@ El proyecto sigue **Clean Architecture** con separación en capas:
 nextpapyros-backend-api/
 ├── src/
 │   ├── NextPapyros.API/              # 🌐 Presentación
-│   │   ├── Controllers/              # Endpoints REST
+│   │   ├── Controllers/
+│   │   │   ├── AuthController.cs         # Autenticación y registro
+│   │   │   ├── ProductosController.cs    # Gestión de productos
+│   │   │   ├── ProveedoresController.cs  # Gestión de proveedores
+│   │   │   ├── VentasController.cs       # Registro de ventas
+│   │   │   ├── RecepcionesController.cs  # Recepciones de mercancía
+│   │   │   └── ReportesController.cs     # Exportación de reportes
 │   │   ├── Contracts/                # DTOs Request/Response
 │   │   ├── Startup/                  # DbSeeder
 │   │   └── Program.cs                # Configuración
 │   │
 │   ├── NextPapyros.Application/      # 📦 Aplicación
+│   │   └── Reports/                  # Interfaces de reportes
 │   │
 │   ├── NextPapyros.Domain/           # 🎯 Dominio
 │   │   ├── Entities/                 # Modelos de negocio
-│   │   └── Repositories/             # Interfaces
+│   │   │   ├── Usuario.cs
+│   │   │   ├── Producto.cs
+│   │   │   ├── Proveedor.cs
+│   │   │   ├── Venta.cs
+│   │   │   ├── Recepcion.cs
+│   │   │   └── OrdenCompra.cs
+│   │   └── Repositories/             # Interfaces de repositorios
+│   │       ├── IUsuarioRepository.cs
+│   │       ├── IProductoRepository.cs
+│   │       ├── IProveedorRepository.cs
+│   │       ├── IVentaRepository.cs
+│   │       ├── IRecepcionRepository.cs
+│   │       └── IUnitOfWork.cs
 │   │
 │   └── NextPapyros.Infrastructure/   # 🔧 Infraestructura
 │       ├── Auth/                     # JWT, BCrypt
-│       ├── Persistence/              # DbContext
-│       ├── Repositories/             # Implementaciones
+│       ├── Persistence/              # DbContext, UnitOfWork
+│       ├── Repositories/             # Implementaciones de repositorios
+│       ├── Reports/                  # Exportadores CSV/PDF
 │       └── Migrations/               # EF Migrations
 │
 └── NextPapyros.sln
@@ -151,15 +174,20 @@ Accede a la documentación interactiva en:
 
 | Módulo | Endpoint | Método | Descripción |
 |--------|----------|--------|-------------|
-| **Auth** | `/auth/login` | POST | Iniciar sesión |
-| **Auth** | `/auth/register` | POST | Registrar usuario (Admin) |
+| **Auth** | `/auth/login` | POST | Iniciar sesión (retorna JWT) |
+| **Auth** | `/auth/register` | POST | Registrar usuario (solo Admin) |
 | **Productos** | `/products` | GET | Listar productos |
-| **Productos** | `/products` | POST | Crear producto |
-| **Productos** | `/products/{codigo}` | GET | Obtener producto |
-| **Ventas** | `/ventas` | POST | Registrar venta |
+| **Productos** | `/products` | POST | Crear producto (Admin) |
+| **Productos** | `/products/{codigo}` | GET | Obtener producto por código |
+| **Proveedores** | `/proveedores` | GET | Listar proveedores activos |
+| **Proveedores** | `/proveedores` | POST | Crear proveedor (Admin) |
+| **Proveedores** | `/proveedores/{id}` | GET | Obtener proveedor por ID |
+| **Ventas** | `/ventas` | POST | Registrar venta (reduce stock) |
 | **Ventas** | `/ventas/{id}` | GET | Consultar venta |
-| **Recepciones** | `/recepciones` | POST | Registrar recepción |
-| **Reportes** | `/reportes/top-productos` | GET | Top productos vendidos |
+| **Ventas** | `/ventas/pos/buscar` | GET | Buscar productos para POS |
+| **Recepciones** | `/recepciones` | POST | Registrar recepción (incrementa stock) |
+| **Recepciones** | `/recepciones/{id}` | GET | Consultar recepción |
+| **Reportes** | `/reportes/top-productos` | GET | Top productos vendidos (CSV/PDF) |
 | **Reportes** | `/reportes/stock-bajo` | GET | Productos con stock bajo |
 | **Reportes** | `/reportes/ingresos-mensuales` | GET | Ingresos por mes |
 
@@ -213,25 +241,32 @@ dotnet test /p:CollectCoverage=true
 ### Estándares de Código
 
 - ✅ Sigue los principios **SOLID**
-- ✅ Mantén la **separación de responsabilidades**
-- ✅ Usa **nombres descriptivos** en inglés
-- ✅ Añade **comentarios XML** para métodos públicos
-- ✅ Escribe **pruebas** para nuevas funcionalidades
+- ✅ Mantén la **separación de responsabilidades** por capas
+- ✅ Usa **nombres descriptivos** en español para entidades de negocio
+- ✅ Aplica **patrones de diseño** (Repository, Unit of Work, Strategy)
+- ✅ Añade **comentarios XML** para documentación Swagger
+- ✅ Implementa **validaciones de negocio** antes de operaciones
+- ✅ Usa **transacciones** (Unit of Work) para operaciones de múltiples pasos
 
 ---
 
 ## 🗺️ Roadmap
 
+- [x] Autenticación JWT con roles
+- [x] Gestión de productos con stock
+- [x] Gestión de proveedores
+- [x] Sistema de ventas con actualización de inventario
+- [x] Recepciones de mercancía
+- [x] Reportes exportables (CSV/PDF)
+- [x] Patrón Unit of Work para transacciones
 - [ ] Pruebas unitarias e integración
+- [ ] Gestión de devoluciones completa
+- [ ] Órdenes de compra con seguimiento
+- [ ] Dashboard de analytics
 - [ ] Soporte para PostgreSQL
-- [ ] Implementación de CQRS
-- [ ] GraphQL API
-- [ ] Eventos de dominio
 - [ ] Cache distribuido con Redis
+- [ ] API GraphQL
 - [ ] Frontend React/Angular
-- [ ] API de reportes avanzados
-- [ ] Internacionalización (i18n)
-- [ ] Containerización completa
 - [ ] CI/CD con GitHub Actions
 
 ---
