@@ -13,7 +13,8 @@ namespace NextPapyros.API.Controllers;
 [Route("products")]
 public class ProductosController(
     IProductoRepository productos,
-    NextPapyrosDbContext db
+    NextPapyrosDbContext db,
+    IUnitOfWork unitOfWork
 ) : ControllerBase
 {
     /// <summary>
@@ -46,32 +47,54 @@ public class ProductosController(
     [HttpPost]
     [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(ProductoResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ProductoResponse>> Crear([FromBody] CrearProductoRequest req, CancellationToken ct)
     {
+        // Validaciones de reglas de negocio
+        if (req.Costo < 0)
+            return BadRequest("El costo debe ser un valor positivo.");
+        
+        if (req.Precio < 0)
+            return BadRequest("El precio debe ser un valor positivo.");
+        
+        if (req.Precio < req.Costo)
+            return BadRequest("El precio de venta debe ser mayor o igual al costo.");
+
         var existente = await productos.GetByCodigoAsync(req.Codigo, ct);
-        if (existente is not null) return Conflict("Ya existe un producto con ese código.");
+        if (existente is not null) 
+            return Conflict("Ya existe un producto con ese código.");
 
-        var p = new Producto
+        try
         {
-            Codigo = req.Codigo,
-            Nombre = req.Nombre,
-            Categoria = req.Categoria,
-            Costo = req.Costo,
-            Precio = req.Precio,
-            Stock = 0,
-            StockMinimo = req.StockMinimo,
-            Activo = true,
-            FechaIngreso = DateTime.UtcNow
-        };
+            await unitOfWork.BeginAsync(ct);
 
-        await productos.AddAsync(p, ct);
-        await productos.SaveChangesAsync(ct);
+            var p = new Producto
+            {
+                Codigo = req.Codigo.Trim(),
+                Nombre = req.Nombre.Trim(),
+                Categoria = req.Categoria.Trim(),
+                Costo = req.Costo,
+                Precio = req.Precio,
+                Stock = 0,
+                StockMinimo = req.StockMinimo,
+                Activo = true,
+                FechaIngreso = DateTime.UtcNow
+            };
 
-        return CreatedAtAction(nameof(Obtener), new { codigo = p.Codigo },
-            new ProductoResponse(p.Codigo, p.Nombre, p.Categoria, p.Costo, p.Precio, p.Stock, p.StockMinimo, p.Activo));
+            await productos.AddAsync(p, ct);
+            await unitOfWork.CommitAsync(ct);
+
+            return CreatedAtAction(nameof(Obtener), new { codigo = p.Codigo },
+                new ProductoResponse(p.Codigo, p.Nombre, p.Categoria, p.Costo, p.Precio, p.Stock, p.StockMinimo, p.Activo));
+        }
+        catch (Exception)
+        {
+            await unitOfWork.RollbackAsync(ct);
+            throw;
+        }
     }
 
     /// <summary>
