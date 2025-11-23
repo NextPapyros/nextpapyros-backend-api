@@ -17,8 +17,7 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddDbContext<NextPapyrosDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("Default")!,
-                sql => sql.MigrationsHistoryTable("__EFMigrationsHistory", "dbo")));
+            options.UseNpgsql(configuration.GetConnectionString("Default")!));
 
         // Repositories section
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();

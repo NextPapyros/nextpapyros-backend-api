@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -15,10 +16,10 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "Permisos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Codigo = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Codigo = table.Column<string>(type: "character varying(80)", maxLength: 80, nullable: false),
+                    Descripcion = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,15 +30,15 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "Productos",
                 columns: table => new
                 {
-                    Codigo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Nombre = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Categoria = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
-                    Costo = table.Column<double>(type: "float", nullable: false),
-                    Precio = table.Column<double>(type: "float", nullable: false),
-                    Stock = table.Column<int>(type: "int", nullable: false),
-                    StockMinimo = table.Column<int>(type: "int", nullable: false),
-                    FechaIngreso = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Activo = table.Column<bool>(type: "bit", nullable: false)
+                    Codigo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Nombre = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Categoria = table.Column<string>(type: "character varying(80)", maxLength: 80, nullable: false),
+                    Costo = table.Column<double>(type: "double precision", nullable: false),
+                    Precio = table.Column<double>(type: "double precision", nullable: false),
+                    Stock = table.Column<int>(type: "integer", nullable: false),
+                    StockMinimo = table.Column<int>(type: "integer", nullable: false),
+                    FechaIngreso = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Activo = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -48,14 +49,15 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "Proveedores",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Nit = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Correo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Observaciones = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Activo = table.Column<bool>(type: "bit", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombre = table.Column<string>(type: "text", nullable: false),
+                    Nit = table.Column<string>(type: "text", nullable: false),
+                    PersonaContacto = table.Column<string>(type: "text", nullable: false),
+                    Telefono = table.Column<string>(type: "text", nullable: false),
+                    Correo = table.Column<string>(type: "text", nullable: false),
+                    Observaciones = table.Column<string>(type: "text", nullable: false),
+                    Activo = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,11 +68,11 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Activo = table.Column<bool>(type: "bit", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombre = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    Descripcion = table.Column<string>(type: "text", nullable: false),
+                    Activo = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -81,13 +83,13 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "Usuarios",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(180)", maxLength: 180, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Activo = table.Column<bool>(type: "bit", nullable: false),
-                    UltimoAcceso = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombre = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    Email = table.Column<string>(type: "character varying(180)", maxLength: 180, nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: false),
+                    Activo = table.Column<bool>(type: "boolean", nullable: false),
+                    UltimoAcceso = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -98,13 +100,13 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "Ventas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Total = table.Column<double>(type: "float", nullable: false),
-                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MetodoPago = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    MotivoAnulacion = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Total = table.Column<double>(type: "double precision", nullable: false),
+                    Estado = table.Column<string>(type: "text", nullable: false),
+                    MetodoPago = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    MotivoAnulacion = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -115,13 +117,13 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "MovimientosInventario",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Tipo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Cantidad = table.Column<int>(type: "int", nullable: false),
-                    Motivo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProductoCodigo = table.Column<string>(type: "nvarchar(50)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Tipo = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Cantidad = table.Column<int>(type: "integer", nullable: false),
+                    Motivo = table.Column<string>(type: "text", nullable: false),
+                    ProductoCodigo = table.Column<string>(type: "character varying(50)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -138,13 +140,13 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "OrdenesCompra",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FechaEmision = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Estado = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    FechaEsperada = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Total = table.Column<double>(type: "float", nullable: false),
-                    ProveedorId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FechaEmision = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Estado = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    FechaEsperada = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Total = table.Column<double>(type: "double precision", nullable: false),
+                    ProveedorId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -161,10 +163,10 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "ProductoProveedores",
                 columns: table => new
                 {
-                    ProductoCodigo = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    ProveedorId = table.Column<int>(type: "int", nullable: false),
-                    CostoReferencial = table.Column<double>(type: "float", nullable: false),
-                    Preferente = table.Column<bool>(type: "bit", nullable: false)
+                    ProductoCodigo = table.Column<string>(type: "character varying(50)", nullable: false),
+                    ProveedorId = table.Column<int>(type: "integer", nullable: false),
+                    CostoReferencial = table.Column<double>(type: "double precision", nullable: false),
+                    Preferente = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -187,10 +189,10 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "RolPermisos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RolId = table.Column<int>(type: "int", nullable: false),
-                    PermisoId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RolId = table.Column<int>(type: "integer", nullable: false),
+                    PermisoId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -213,14 +215,14 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "Logs",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UsuarioId = table.Column<int>(type: "int", nullable: false),
-                    Entidad = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
-                    IdEntidad = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Accion = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
-                    Detalle = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UsuarioId = table.Column<int>(type: "integer", nullable: false),
+                    Entidad = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
+                    IdEntidad = table.Column<string>(type: "text", nullable: false),
+                    Accion = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    Detalle = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -237,11 +239,11 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "UsuarioRoles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FechaAsignacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UsuarioId = table.Column<int>(type: "int", nullable: false),
-                    RolId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FechaAsignacion = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UsuarioId = table.Column<int>(type: "integer", nullable: false),
+                    RolId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -264,12 +266,12 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "Devoluciones",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Motivo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Estado = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    VentaId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Motivo = table.Column<string>(type: "text", nullable: false),
+                    Estado = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    VentaId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -286,13 +288,13 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "LineasVenta",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Cantidad = table.Column<int>(type: "int", nullable: false),
-                    PrecioUnitario = table.Column<double>(type: "float", nullable: false),
-                    Subtotal = table.Column<double>(type: "float", nullable: false),
-                    VentaId = table.Column<int>(type: "int", nullable: false),
-                    ProductoCodigo = table.Column<string>(type: "nvarchar(50)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Cantidad = table.Column<int>(type: "integer", nullable: false),
+                    PrecioUnitario = table.Column<double>(type: "double precision", nullable: false),
+                    Subtotal = table.Column<double>(type: "double precision", nullable: false),
+                    VentaId = table.Column<int>(type: "integer", nullable: false),
+                    ProductoCodigo = table.Column<string>(type: "character varying(50)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -315,13 +317,13 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "LineasOrdenCompra",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CantidadSolicitada = table.Column<int>(type: "int", nullable: false),
-                    CostoUnitario = table.Column<double>(type: "float", nullable: false),
-                    Subtotal = table.Column<double>(type: "float", nullable: false),
-                    OrdenCompraId = table.Column<int>(type: "int", nullable: false),
-                    ProductoCodigo = table.Column<string>(type: "nvarchar(50)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CantidadSolicitada = table.Column<int>(type: "integer", nullable: false),
+                    CostoUnitario = table.Column<double>(type: "double precision", nullable: false),
+                    Subtotal = table.Column<double>(type: "double precision", nullable: false),
+                    OrdenCompraId = table.Column<int>(type: "integer", nullable: false),
+                    ProductoCodigo = table.Column<string>(type: "character varying(50)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -344,11 +346,11 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "Recepciones",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NroFacturaGuia = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrdenCompraId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    NroFacturaGuia = table.Column<string>(type: "text", nullable: false),
+                    OrdenCompraId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -365,11 +367,11 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "DevolucionLineas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CantidadDevuelta = table.Column<int>(type: "int", nullable: false),
-                    DevolucionId = table.Column<int>(type: "int", nullable: false),
-                    LineaVentaId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CantidadDevuelta = table.Column<int>(type: "integer", nullable: false),
+                    DevolucionId = table.Column<int>(type: "integer", nullable: false),
+                    LineaVentaId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -392,11 +394,11 @@ namespace NextPapyros.Infrastructure.Migrations
                 name: "LineasRecepcion",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CantidadRecibida = table.Column<int>(type: "int", nullable: false),
-                    RecepcionId = table.Column<int>(type: "int", nullable: false),
-                    ProductoCodigo = table.Column<string>(type: "nvarchar(50)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CantidadRecibida = table.Column<int>(type: "integer", nullable: false),
+                    RecepcionId = table.Column<int>(type: "integer", nullable: false),
+                    ProductoCodigo = table.Column<string>(type: "character varying(50)", nullable: false)
                 },
                 constraints: table =>
                 {
