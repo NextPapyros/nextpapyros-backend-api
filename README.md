@@ -7,10 +7,12 @@ Sistema de gestión empresarial para **inventario, ventas, compras, recepciones 
 ## 🚀 Características Principales
 
 - 🔐 **Autenticación JWT** con sistema de roles y permisos
+- 👥 **Gestión de Empleados** con roles y control de acceso (Admin)
 - 📦 **Gestión de Inventario** con control de stock y movimientos
 - 🏢 **Gestión de Proveedores** con validación de duplicados
 - 🛒 **Órdenes de Compra** y recepciones de mercancía
 - 💰 **Registro de Ventas** con actualización automática de stock
+- 📄 **Comprobantes PDF** generados automáticamente por venta
 - 🔄 **Devoluciones** con trazabilidad completa
 - 📊 **Reportes** exportables a CSV/PDF (top productos, stock bajo, ingresos mensuales)
 - 📝 **Auditoría** con logs de operaciones
@@ -24,10 +26,12 @@ Sistema de gestión empresarial para **inventario, ventas, compras, recepciones 
 |------------|---------|-------------|
 | **.NET** | 8.0 | Framework principal |
 | **Entity Framework Core** | 9.0 | ORM y migraciones |
-| **SQL Server** | 2019+ | Base de datos |
+| **PostgreSQL** | 16+ | Base de datos |
+| **Npgsql** | 9.0 | Provider de PostgreSQL |
 | **JWT Bearer** | 8.0 | Autenticación |
 | **Swagger/OpenAPI** | 6.x | Documentación API |
 | **BCrypt.Net** | 4.0 | Hashing de contraseñas |
+| **QuestPDF** | 2024.10 | Generación de PDFs |
 
 ---
 
@@ -75,6 +79,7 @@ nextpapyros-backend-api/
 │   ├── NextPapyros.API/              # 🌐 Presentación
 │   │   ├── Controllers/
 │   │   │   ├── AuthController.cs         # Autenticación y registro
+│   │   │   ├── EmpleadosController.cs    # Gestión de empleados
 │   │   │   ├── ProductosController.cs    # Gestión de productos
 │   │   │   ├── ProveedoresController.cs  # Gestión de proveedores
 │   │   │   ├── VentasController.cs       # Registro de ventas
@@ -107,7 +112,7 @@ nextpapyros-backend-api/
 │       ├── Auth/                     # JWT, BCrypt
 │       ├── Persistence/              # DbContext, UnitOfWork
 │       ├── Repositories/             # Implementaciones de repositorios
-│       ├── Reports/                  # Exportadores CSV/PDF
+│       ├── Reports/                  # Exportadores CSV/PDF, Comprobantes
 │       └── Migrations/               # EF Migrations
 │
 └── NextPapyros.sln
@@ -120,7 +125,7 @@ nextpapyros-backend-api/
 ### Requisitos
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- SQL Server (Windows) o Docker (macOS/Linux)
+- PostgreSQL 16+ ([Homebrew en macOS](https://formulae.brew.sh/formula/postgresql@16) o [Docker](https://hub.docker.com/_/postgres))
 
 ### Instalación Rápida
 
@@ -129,10 +134,17 @@ nextpapyros-backend-api/
 git clone https://github.com/NextPapyros/nextpapyros-backend-api.git
 cd nextpapyros-backend-api
 
-# 2. Configurar base de datos (Docker en macOS/Linux)
-docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Password123*" \
-  -p 1433:1433 --name sqlserver-nextpapyros \
-  -d mcr.microsoft.com/mssql/server:2019-latest
+# 2. Configurar PostgreSQL
+# Opción A - Homebrew en macOS:
+brew install postgresql@16
+brew services start postgresql@16
+psql postgres -c "CREATE DATABASE \"NextPapyrosDb\";"
+
+# Opción B - Docker:
+docker run --name postgres-nextpapyros \
+  -e POSTGRES_DB=NextPapyrosDb \
+  -e POSTGRES_PASSWORD=Password123* \
+  -p 5432:5432 -d postgres:16
 
 # 3. Aplicar migraciones
 cd src/NextPapyros.API
@@ -176,6 +188,11 @@ Accede a la documentación interactiva en:
 |--------|----------|--------|-------------|
 | **Auth** | `/auth/login` | POST | Iniciar sesión (retorna JWT) |
 | **Auth** | `/auth/register` | POST | Registrar usuario (solo Admin) |
+| **Empleados** | `/empleados` | GET | Listar empleados (Admin) |
+| **Empleados** | `/empleados` | POST | Crear empleado (Admin) |
+| **Empleados** | `/empleados/{id}` | GET | Obtener empleado por ID (Admin) |
+| **Empleados** | `/empleados/{id}` | PUT | Actualizar empleado (Admin) |
+| **Empleados** | `/empleados/{id}/inhabilitar` | PATCH | Inhabilitar empleado (Admin) |
 | **Productos** | `/products` | GET | Listar productos |
 | **Productos** | `/products` | POST | Crear producto (Admin) |
 | **Productos** | `/products/{codigo}` | GET | Obtener producto por código |
@@ -184,6 +201,7 @@ Accede a la documentación interactiva en:
 | **Proveedores** | `/proveedores/{id}` | GET | Obtener proveedor por ID |
 | **Ventas** | `/ventas` | POST | Registrar venta (reduce stock) |
 | **Ventas** | `/ventas/{id}` | GET | Consultar venta |
+| **Ventas** | `/ventas/{id}/comprobante` | GET | Generar comprobante PDF |
 | **Ventas** | `/ventas/pos/buscar` | GET | Buscar productos para POS |
 | **Recepciones** | `/recepciones` | POST | Registrar recepción (incrementa stock) |
 | **Recepciones** | `/recepciones/{id}` | GET | Consultar recepción |
@@ -253,17 +271,19 @@ dotnet test /p:CollectCoverage=true
 ## 🗺️ Roadmap
 
 - [x] Autenticación JWT con roles
+- [x] Gestión de empleados (CRUD completo)
 - [x] Gestión de productos con stock
 - [x] Gestión de proveedores
 - [x] Sistema de ventas con actualización de inventario
+- [x] Comprobantes PDF de ventas
 - [x] Recepciones de mercancía
 - [x] Reportes exportables (CSV/PDF)
 - [x] Patrón Unit of Work para transacciones
+- [x] Migración a PostgreSQL
 - [ ] Pruebas unitarias e integración
 - [ ] Gestión de devoluciones completa
 - [ ] Órdenes de compra con seguimiento
 - [ ] Dashboard de analytics
-- [ ] Soporte para PostgreSQL
 - [ ] Cache distribuido con Redis
 - [ ] API GraphQL
 - [ ] Frontend React/Angular
