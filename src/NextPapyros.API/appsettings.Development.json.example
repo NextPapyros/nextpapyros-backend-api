@@ -1,0 +1,22 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "Default": "Host=localhost;Port=5432;Database=NextPapyrosDb;Username=TU_USUARIO;Password=TU_PASSWORD;"
+  },
+  "Jwt": {
+    "Issuer": "NextPapyros",
+    "Audience": "NextPapyrosClients",
+    "Key": "PWItvlPpB7hdBrN3OfKilCRV4ZdyB01HWe+XGYPvLRNCzrltRI6ZmEYqax6AEOmQ"
+  },
+  "Email": {
+    "From": "tu-correo@gmail.com",
+    "Password": "tu-contraseña-de-aplicacion-gmail-16-caracteres",
+    "SmtpServer": "smtp.gmail.com",
+    "SmtpPort": "587"
+  }
+}
