@@ -32,6 +32,9 @@ public static class DependencyInjection
         services.AddScoped<IReportExporter, CsvReportExporter>();
         services.AddScoped<IReportExporter, PdfReportExporter>();
 
+        // Services section
+        services.AddScoped<IComprobanteService, ComprobanteService>();
+
         // Auth section
         services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
         services.AddSingleton<ITokenService, JwtTokenService>();

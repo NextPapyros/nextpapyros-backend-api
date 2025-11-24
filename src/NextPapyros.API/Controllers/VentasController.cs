@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NextPapyros.API.Contracts.Ventas;
+using NextPapyros.Application.Reports;
 using NextPapyros.Domain.Entities;
 using NextPapyros.Domain.Entities.Enums;
 using NextPapyros.Domain.Repositories;
@@ -14,7 +15,8 @@ namespace NextPapyros.API.Controllers;
 public class VentasController(
     IVentaRepository ventas,
     NextPapyrosDbContext db,
-    IUnitOfWork unitOfWork
+    IUnitOfWork unitOfWork,
+    IComprobanteService comprobanteService
 ) : ControllerBase
 {
     /// <summary>
@@ -280,5 +282,56 @@ public class VentasController(
         );
 
         return Ok(response);
+    }
+
+    /// <summary>
+    /// Genera el comprobante PDF de una venta.
+    /// </summary>
+    /// <param name="id">ID de la venta.</param>
+    /// <param name="ct">Token de cancelación.</param>
+    /// <returns>El archivo PDF del comprobante.</returns>
+    /// <response code="200">Comprobante generado exitosamente.</response>
+    /// <response code="404">Venta no encontrada.</response>
+    /// <response code="401">No autenticado.</response>
+    /// <remarks>
+    /// Ejemplo de uso:
+    /// 
+    ///     GET /ventas/5/comprobante
+    ///     
+    /// Genera un comprobante en formato PDF con la siguiente información:
+    /// - Encabezado con datos de la empresa (NextPapyros)
+    /// - Número de comprobante, fecha y estado de la venta
+    /// - Método de pago utilizado
+    /// - Detalle de productos: cantidad, nombre, código, precio unitario y subtotal
+    /// - Totales: subtotal general y total de la venta
+    /// 
+    /// El PDF se descarga automáticamente con el nombre: `comprobante-{id}.pdf`
+    /// 
+    /// **Importante:**
+    /// - Solo se pueden generar comprobantes de ventas existentes.
+    /// - El comprobante incluye todos los productos de la venta con sus respectivos detalles.
+    /// 
+    /// **Respuestas de error:**
+    /// - "Venta con ID X no encontrada"
+    /// </remarks>
+    [HttpGet("{id}/comprobante")]
+    [Authorize]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GenerarComprobante(int id, CancellationToken ct)
+    {
+        var venta = await db.Ventas
+            .Include(v => v.Lineas)
+            .ThenInclude(l => l.Producto)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(v => v.Id == id, ct);
+
+        if (venta is null)
+            return NotFound($"Venta con ID {id} no encontrada.");
+
+        var pdfBytes = comprobanteService.GenerarComprobantePdf(venta);
+
+        return File(pdfBytes, "application/pdf", $"comprobante-{id:D8}.pdf");
     }
 }
