@@ -14,6 +14,16 @@ public class UsuarioRepository(NextPapyrosDbContext db) : IUsuarioRepository
            .Include(u => u.Roles).ThenInclude(ur => ur.Rol)
            .FirstOrDefaultAsync(u => u.Email == email, ct);
 
+    public Task<Usuario?> GetByIdAsync(int id, CancellationToken ct = default) =>
+        _db.Usuarios
+           .Include(u => u.Roles).ThenInclude(ur => ur.Rol)
+           .FirstOrDefaultAsync(u => u.Id == id, ct);
+
+    public async Task<IEnumerable<Usuario>> GetAllAsync(CancellationToken ct = default) =>
+        await _db.Usuarios
+           .Include(u => u.Roles).ThenInclude(ur => ur.Rol)
+           .ToListAsync(ct);
+
     public Task<bool> EmailExistsAsync(string email, CancellationToken ct = default) =>
         _db.Usuarios.AnyAsync(u => u.Email == email, ct);
 
