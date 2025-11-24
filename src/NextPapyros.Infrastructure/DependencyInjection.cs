@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NextPapyros.Application.Email;
 using NextPapyros.Application.Reports;
 using NextPapyros.Domain.Repositories;
 using NextPapyros.Infrastructure.Auth;
+using NextPapyros.Infrastructure.Email;
 using NextPapyros.Infrastructure.Persistence;
 using NextPapyros.Infrastructure.Reports;
 using NextPapyros.Infrastructure.Repositories;
@@ -34,6 +36,7 @@ public static class DependencyInjection
 
         // Services section
         services.AddScoped<IComprobanteService, ComprobanteService>();
+        services.AddScoped<IEmailService, GmailService>();
 
         // Auth section
         services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();

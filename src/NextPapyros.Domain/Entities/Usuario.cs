@@ -8,6 +8,10 @@ public class Usuario
     public string PasswordHash { get; set; } = default!;
     public bool Activo { get; set; } = true;
     public DateTime? UltimoAcceso { get; private set; }
+    
+    // Recuperación de contraseña
+    public string? ResetPasswordToken { get; set; }
+    public DateTime? ResetPasswordTokenExpiry { get; set; }
 
     public ICollection<UsuarioRol> Roles { get; set; } = new List<UsuarioRol>();
     public ICollection<LogOperacion> Logs { get; set; } = new List<LogOperacion>();

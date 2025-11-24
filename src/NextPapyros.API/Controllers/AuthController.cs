@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextPapyros.API.Contracts.Auth;
+using NextPapyros.Application.Email;
 using NextPapyros.Domain.Entities;
 using NextPapyros.Domain.Repositories;
 using NextPapyros.Infrastructure.Auth;
@@ -15,7 +16,8 @@ public class AuthController(
     IUsuarioRepository users,
     IRoleRepository roles,
     IPasswordHasher hasher,
-    ITokenService tokens
+    ITokenService tokens,
+    IEmailService emailService
 ) : ControllerBase
 {
     /// <summary>
@@ -131,5 +133,119 @@ public class AuthController(
 
         var roleNames = user.Roles.Select(r => r.Rol.Nombre).ToArray();
         return Ok(new MeResponse(user.Id, user.Nombre, user.Email, roleNames));
+    }
+
+    /// <summary>
+    /// Solicita un token de recuperación de contraseña.
+    /// </summary>
+    /// <param name="req">Email del usuario que solicita la recuperación.</param>
+    /// <param name="ct">Token de cancelación.</param>
+    /// <returns>Resultado de la operación.</returns>
+    /// <response code="200">Solicitud procesada. Si el email existe, se enviará un correo con el token.</response>
+    /// <remarks>
+    /// Ejemplo de request:
+    /// 
+    ///     POST /auth/forgot-password
+    ///     {
+    ///        "email": "usuario@example.com"
+    ///     }
+    ///     
+    /// **Importante:**
+    /// - El token es válido por 30 minutos
+    /// - Si el email no existe, se retorna 200 por seguridad (no revelar usuarios)
+    /// - El token se envía por correo electrónico
+    /// - Solo usuarios activos pueden solicitar recuperación
+    /// </remarks>
+    [HttpPost("forgot-password")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordRequest req, CancellationToken ct)
+    {
+        var user = await users.GetByEmailAsync(req.Email, ct);
+        
+        // Por seguridad, siempre retornamos 200 aunque el email no exista
+        if (user is null || !user.Activo)
+            return Ok(new { message = "Si el email existe, recibirás un correo con instrucciones." });
+
+        // Generar token aleatorio de 6 dígitos
+        var token = new Random().Next(100000, 999999).ToString();
+        
+        user.ResetPasswordToken = token;
+        user.ResetPasswordTokenExpiry = DateTime.UtcNow.AddMinutes(30);
+        
+        await users.SaveChangesAsync(ct);
+
+        try
+        {
+            await emailService.EnviarCorreoRecuperacionAsync(
+                user.Email,
+                user.Nombre,
+                token,
+                ct);
+        }
+        catch (Exception)
+        {
+            // Log del error pero no revelamos el fallo al usuario
+            return Ok(new { message = "Si el email existe, recibirás un correo con instrucciones." });
+        }
+
+        return Ok(new { message = "Si el email existe, recibirás un correo con instrucciones." });
+    }
+
+    /// <summary>
+    /// Restablece la contraseña usando el token de recuperación.
+    /// </summary>
+    /// <param name="req">Email, token de recuperación y nueva contraseña.</param>
+    /// <param name="ct">Token de cancelación.</param>
+    /// <returns>Resultado de la operación.</returns>
+    /// <response code="200">Contraseña restablecida exitosamente.</response>
+    /// <response code="400">Token inválido, expirado o datos incorrectos.</response>
+    /// <remarks>
+    /// Ejemplo de request:
+    /// 
+    ///     POST /auth/reset-password
+    ///     {
+    ///        "email": "usuario@example.com",
+    ///        "token": "123456",
+    ///        "newPassword": "NuevaPassword123*"
+    ///     }
+    ///     
+    /// **Validaciones:**
+    /// - El token debe ser válido y no estar expirado (30 minutos)
+    /// - La nueva contraseña debe cumplir los requisitos de seguridad
+    /// - El usuario debe estar activo
+    /// 
+    /// **Nota:** Después de restablecer la contraseña, el token se invalida automáticamente.
+    /// </remarks>
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordRequest req, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(req.NewPassword) || req.NewPassword.Length < 8)
+            return BadRequest("La contraseña debe tener al menos 8 caracteres.");
+
+        var user = await users.GetByEmailAsync(req.Email, ct);
+        
+        if (user is null || !user.Activo)
+            return BadRequest("Token inválido o expirado.");
+
+        if (string.IsNullOrEmpty(user.ResetPasswordToken) || 
+            user.ResetPasswordToken != req.Token)
+            return BadRequest("Token inválido o expirado.");
+
+        if (user.ResetPasswordTokenExpiry is null || 
+            user.ResetPasswordTokenExpiry < DateTime.UtcNow)
+            return BadRequest("Token inválido o expirado.");
+
+        // Actualizar contraseña y limpiar token
+        user.PasswordHash = hasher.Hash(req.NewPassword);
+        user.ResetPasswordToken = null;
+        user.ResetPasswordTokenExpiry = null;
+
+        await users.SaveChangesAsync(ct);
+
+        return Ok(new { message = "Contraseña restablecida exitosamente." });
     }
 }
