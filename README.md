@@ -7,6 +7,7 @@ Sistema de gestión empresarial para **inventario, ventas, compras, recepciones 
 ## 🚀 Características Principales
 
 - 🔐 **Autenticación JWT** con sistema de roles y permisos
+- 🔑 **Recuperación de Contraseña** por correo electrónico con tokens seguros
 - 👥 **Gestión de Empleados** con roles y control de acceso (Admin)
 - 📦 **Gestión de Inventario** con control de stock y movimientos
 - 🏢 **Gestión de Proveedores** con validación de duplicados
@@ -17,6 +18,7 @@ Sistema de gestión empresarial para **inventario, ventas, compras, recepciones 
 - 📊 **Reportes** exportables a CSV/PDF (top productos, stock bajo, ingresos mensuales)
 - 📝 **Auditoría** con logs de operaciones
 - 🔒 **Transacciones atómicas** con patrón Unit of Work
+- 📧 **Envío de correos** con MailKit y SMTP
 
 ---
 
@@ -32,6 +34,7 @@ Sistema de gestión empresarial para **inventario, ventas, compras, recepciones 
 | **Swagger/OpenAPI** | 6.x | Documentación API |
 | **BCrypt.Net** | 4.0 | Hashing de contraseñas |
 | **QuestPDF** | 2024.10 | Generación de PDFs |
+| **MailKit** | 4.14 | Envío de correos SMTP |
 
 ---
 
@@ -90,6 +93,7 @@ nextpapyros-backend-api/
 │   │   └── Program.cs                # Configuración
 │   │
 │   ├── NextPapyros.Application/      # 📦 Aplicación
+│   │   ├── Email/                    # Interfaces de email
 │   │   └── Reports/                  # Interfaces de reportes
 │   │
 │   ├── NextPapyros.Domain/           # 🎯 Dominio
@@ -110,6 +114,7 @@ nextpapyros-backend-api/
 │   │
 │   └── NextPapyros.Infrastructure/   # 🔧 Infraestructura
 │       ├── Auth/                     # JWT, BCrypt
+│       ├── Email/                    # Servicio de correos (Gmail SMTP)
 │       ├── Persistence/              # DbContext, UnitOfWork
 │       ├── Repositories/             # Implementaciones de repositorios
 │       ├── Reports/                  # Exportadores CSV/PDF, Comprobantes
@@ -146,15 +151,22 @@ docker run --name postgres-nextpapyros \
   -e POSTGRES_PASSWORD=Password123* \
   -p 5432:5432 -d postgres:16
 
-# 3. Aplicar migraciones
+# 3. Configurar Email (OPCIONAL - para recuperación de contraseña)
 cd src/NextPapyros.API
+cp appsettings.Development.json.example appsettings.Development.json
+# Edita appsettings.Development.json con tu correo Gmail y contraseña de aplicación
+# Ver instrucciones detalladas en SETUP_EMAIL.md
+
+# 4. Aplicar migraciones
 dotnet ef database update
 
-# 4. Ejecutar
+# 5. Ejecutar
 dotnet run
 ```
 
-**📖 Para instrucciones detalladas**, consulta **[CONTRIBUTING.md](CONTRIBUTING.md)**.
+**📖 Para instrucciones detalladas**, consulta:
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guía completa de instalación
+- **[SETUP_EMAIL.md](SETUP_EMAIL.md)** - Configuración de correo para recuperación de contraseña
 
 ---
 
@@ -188,6 +200,8 @@ Accede a la documentación interactiva en:
 |--------|----------|--------|-------------|
 | **Auth** | `/auth/login` | POST | Iniciar sesión (retorna JWT) |
 | **Auth** | `/auth/register` | POST | Registrar usuario (solo Admin) |
+| **Auth** | `/auth/forgot-password` | POST | Solicitar token de recuperación |
+| **Auth** | `/auth/reset-password` | POST | Restablecer contraseña con token |
 | **Empleados** | `/empleados` | GET | Listar empleados (Admin) |
 | **Empleados** | `/empleados` | POST | Crear empleado (Admin) |
 | **Empleados** | `/empleados/{id}` | GET | Obtener empleado por ID (Admin) |
@@ -240,6 +254,7 @@ dotnet test /p:CollectCoverage=true
 ## 📖 Documentación Adicional
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guía completa de instalación y configuración
+- **[SETUP_EMAIL.md](SETUP_EMAIL.md)** - Configuración de Gmail para recuperación de contraseña
 - **[Swagger UI](http://localhost:5288/swagger)** - Documentación interactiva de la API
 - **[Issues](https://github.com/NextPapyros/nextpapyros-backend-api/issues)** - Reportar bugs o solicitar features
 
@@ -271,6 +286,7 @@ dotnet test /p:CollectCoverage=true
 ## 🗺️ Roadmap
 
 - [x] Autenticación JWT con roles
+- [x] Recuperación de contraseña por email
 - [x] Gestión de empleados (CRUD completo)
 - [x] Gestión de productos con stock
 - [x] Gestión de proveedores
@@ -280,6 +296,7 @@ dotnet test /p:CollectCoverage=true
 - [x] Reportes exportables (CSV/PDF)
 - [x] Patrón Unit of Work para transacciones
 - [x] Migración a PostgreSQL
+- [x] Envío de correos con MailKit
 - [ ] Pruebas unitarias e integración
 - [ ] Gestión de devoluciones completa
 - [ ] Órdenes de compra con seguimiento
