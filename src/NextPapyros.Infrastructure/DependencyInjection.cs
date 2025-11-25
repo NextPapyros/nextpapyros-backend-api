@@ -9,6 +9,7 @@ using NextPapyros.Infrastructure.Email;
 using NextPapyros.Infrastructure.Persistence;
 using NextPapyros.Infrastructure.Reports;
 using NextPapyros.Infrastructure.Repositories;
+using Resend;
 
 namespace NextPapyros.Infrastructure;
 
@@ -36,7 +37,13 @@ public static class DependencyInjection
 
         // Services section
         services.AddScoped<IComprobanteService, ComprobanteService>();
-        services.AddScoped<IEmailService, GmailService>();
+        services.AddScoped<IEmailService, ResendEmailService>();
+        services.AddHttpClient<IResend, ResendClient>();
+        services.AddOptions();
+        services.Configure<ResendClientOptions>(o =>
+        {
+            o.ApiToken = configuration["Resend:ApiKey"]!;
+        });
 
         // Auth section
         services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
