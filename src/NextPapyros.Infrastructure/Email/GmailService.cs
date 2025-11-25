@@ -36,6 +36,8 @@ public class GmailService : IEmailService
         message.To.Add(new MailboxAddress(nombreUsuario, destinatario));
         message.Subject = "Recuperación de Contraseña - NextPapyros";
 
+        var frontendUrl = _configuration["FrontendUrl"] ?? throw new InvalidOperationException("FrontendUrl no configurado");
+
         var bodyBuilder = new BodyBuilder
         {
             HtmlBody = $@"
@@ -45,9 +47,9 @@ public class GmailService : IEmailService
                     <style>
                         body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
                         .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-                        .header {{ background-color: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }}
+                        .header {{ background-color: #a3ebb1; color: black; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }}
                         .content {{ background-color: #f9fafb; padding: 30px; border-radius: 0 0 5px 5px; }}
-                        .token-box {{ background-color: white; border: 2px solid #2563eb; padding: 15px; margin: 20px 0; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 2px; border-radius: 5px; }}
+                        .token-box {{ background-color: white; border: 2px solid #a3ebb1; padding: 15px; margin: 20px 0; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 2px; border-radius: 5px; }}
                         .footer {{ margin-top: 20px; text-align: center; font-size: 12px; color: #666; }}
                         .warning {{ color: #dc2626; font-weight: bold; }}
                     </style>
@@ -63,6 +65,7 @@ public class GmailService : IEmailService
                             <p>Tu código de recuperación es:</p>
                             <div class='token-box'>{token}</div>
                             <p>Este código es válido por <strong>30 minutos</strong>.</p>
+                            <p>O puedes acceder a la página de recuperación de contraseña en el siguiente enlace: <a href='{frontendUrl}/reset-password?token={token}&email={destinatario}' target='_blank' rel='noopener noreferrer'>Restablecer Contraseña</a></p>
                             <p class='warning'>⚠️ Si no solicitaste este cambio, ignora este correo y tu contraseña permanecerá sin cambios.</p>
                         </div>
                         <div class='footer'>
