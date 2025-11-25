@@ -99,7 +99,8 @@ using (var scope = app.Services.CreateScope())
     await DbSeeder.SeedAsync(
         sp.GetRequiredService<IUsuarioRepository>(),
         sp.GetRequiredService<IRoleRepository>(),
-        sp.GetRequiredService<IPasswordHasher>()
+        sp.GetRequiredService<IPasswordHasher>(),
+        sp.GetRequiredService<IConfiguration>()
     );
 }
 

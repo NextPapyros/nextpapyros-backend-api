@@ -10,6 +10,7 @@ public static class DbSeeder
         IUsuarioRepository users,
         IRoleRepository roles,
         IPasswordHasher hasher,
+        IConfiguration configuration,
         CancellationToken ct = default)
     {
         var adminRole = await roles.GetByNameAsync("Admin", ct);
@@ -18,12 +19,15 @@ public static class DbSeeder
         {
             adminRole = new Rol { Nombre = "Admin", Descripcion = "Administrador" };
 
+            var adminEmail = configuration["Admin:Email"] ?? "admin@admin.com";
+            var adminPassword = configuration["Admin:Password"] ?? "Admin2025*";
+
             var admin = new Usuario
             {
                 // Mocked information used for the initial admin user
                 Nombre = "Administrador",
-                Email = "admin@admin.com",
-                PasswordHash = hasher.Hash("Admin2025*"),
+                Email = adminEmail,
+                PasswordHash = hasher.Hash(adminPassword),
                 Activo = true
             };
             admin.Roles.Add(new UsuarioRol { Rol = adminRole, Usuario = admin });
