@@ -62,10 +62,8 @@ public class GmailService : IEmailService
                         <div class='content'>
                             <p>Hola <strong>{nombreUsuario}</strong>,</p>
                             <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en NextPapyros.</p>
-                            <p>Tu código de recuperación es:</p>
-                            <div class='token-box'>{token}</div>
-                            <p>Este código es válido por <strong>30 minutos</strong>.</p>
-                            <p>O puedes acceder a la página de recuperación de contraseña en el siguiente enlace: <a href='{frontendUrl}/reset-password?token={token}&email={destinatario}' target='_blank' rel='noopener noreferrer'>Restablecer Contraseña</a></p>
+                            <p>Puedes acceder a la página de recuperación de contraseña en el siguiente enlace: <a href='{frontendUrl}/reset-password?token={token}&email={destinatario}' target='_blank' rel='noopener noreferrer'>Restablecer Contraseña</a></p>
+                            <p>Este enlace es válido por <strong>30 minutos</strong>.</p>
                             <p class='warning'>⚠️ Si no solicitaste este cambio, ignora este correo y tu contraseña permanecerá sin cambios.</p>
                         </div>
                         <div class='footer'>
