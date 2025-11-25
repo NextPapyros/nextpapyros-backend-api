@@ -201,8 +201,13 @@ public class ProductosController(
             query = query.Where(p => p.Activo);
         }
 
-        if (!string.IsNullOrWhiteSpace(q))
-            query = query.Where(p => p.Codigo.Contains(q) || p.Nombre.Contains(q) || p.Categoria.Contains(q));
+        if (!string.IsNullOrWhiteSpace(q)) {
+            var termino = q.ToLower();
+            query = query.Where(p => p.Codigo.ToLower().Contains(termino) 
+                || p.Nombre.ToLower().Contains(termino) 
+                || p.Categoria.ToLower().Contains(termino)
+            );
+        }
 
         if (lowStock)
             query = query.Where(p => p.Stock <= p.StockMinimo);
