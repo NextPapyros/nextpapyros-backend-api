@@ -38,9 +38,12 @@ builder.Services.AddControllers();
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policyBuilder =>
+    options.AddPolicy("AllowSpecificOrigin", policyBuilder =>
     {
-        policyBuilder.AllowAnyOrigin()
+        var allowedOrigins = (builder.Configuration["AllowedOrigins"] ?? "http://localhost:5173")
+            .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+        policyBuilder.WithOrigins(allowedOrigins)
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
@@ -125,7 +128,7 @@ using (var scope = app.Services.CreateScope())
 app.UseHttpsRedirection();
 
 // CORS
-app.UseCors("AllowAll");
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
