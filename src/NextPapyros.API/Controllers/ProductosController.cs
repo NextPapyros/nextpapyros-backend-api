@@ -129,6 +129,7 @@ public class ProductosController(
     /// </summary>
     /// <param name="q">Búsqueda por código o nombre (opcional).</param>
     /// <param name="lowStock">Filtrar solo productos con stock bajo (opcional, default: false).</param>
+    /// <param name="includeInactive">Incluir productos desactivados (solo Admin, default: false).</param>
     /// <param name="ct">Token de cancelación.</param>
     /// <returns>Lista de productos que cumplen los criterios.</returns>
     /// <response code="200">Lista de productos (puede estar vacía).</response>
@@ -147,9 +148,14 @@ public class ProductosController(
     [Authorize]
     [ProducesResponseType(typeof(IEnumerable<ProductoResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<IEnumerable<ProductoResponse>>> Listar([FromQuery] string? q, [FromQuery] bool lowStock = false, CancellationToken ct = default)
+    public async Task<ActionResult<IEnumerable<ProductoResponse>>> Listar([FromQuery] string? q, [FromQuery] bool lowStock = false, [FromQuery] bool includeInactive = false, CancellationToken ct = default)
     {
-        var query = db.Productos.AsNoTracking().Where(p => p.Activo);
+        var query = db.Productos.AsNoTracking().AsQueryable();
+
+        if (!includeInactive || !User.IsInRole("Admin"))
+        {
+            query = query.Where(p => p.Activo);
+        }
 
         if (!string.IsNullOrWhiteSpace(q))
             query = query.Where(p => p.Codigo.Contains(q) || p.Nombre.Contains(q) || p.Categoria.Contains(q));
@@ -190,6 +196,52 @@ public class ProductosController(
             ProductoCodigo = p.Codigo
         });
 
+        await productos.UpdateAsync(p, ct);
+        await productos.SaveChangesAsync(ct);
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Desactiva un producto (Soft Delete).
+    /// </summary>
+    /// <param name="codigo">Código del producto a desactivar.</param>
+    /// <param name="ct">Token de cancelación.</param>
+    /// <response code="204">Producto desactivado exitosamente.</response>
+    /// <response code="404">Producto no encontrado.</response>
+    [HttpDelete("{codigo}")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> Desactivar([FromRoute] string codigo, CancellationToken ct)
+    {
+        var p = await productos.GetByCodigoAsync(codigo, ct);
+        if (p is null) return NotFound();
+
+        p.Activo = false;
+        await productos.UpdateAsync(p, ct);
+        await productos.SaveChangesAsync(ct);
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Reactiva un producto previamente desactivado.
+    /// </summary>
+    /// <param name="codigo">Código del producto a reactivar.</param>
+    /// <param name="ct">Token de cancelación.</param>
+    /// <response code="204">Producto reactivado exitosamente.</response>
+    /// <response code="404">Producto no encontrado.</response>
+    [HttpPost("{codigo}/reactivate")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> Reactivar([FromRoute] string codigo, CancellationToken ct)
+    {
+        var p = await productos.GetByCodigoAsync(codigo, ct);
+        if (p is null) return NotFound();
+
+        p.Activo = true;
         await productos.UpdateAsync(p, ct);
         await productos.SaveChangesAsync(ct);
 
