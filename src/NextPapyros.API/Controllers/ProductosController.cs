@@ -98,6 +98,50 @@ public class ProductosController(
     }
 
     /// <summary>
+    /// Actualiza los datos de un producto existente.
+    /// </summary>
+    /// <param name="codigo">Código único del producto.</param>
+    /// <param name="req">Nuevos datos del producto.</param>
+    /// <param name="ct">Token de cancelación.</param>
+    /// <response code="204">Producto actualizado exitosamente.</response>
+    /// <response code="400">Datos inválidos.</response>
+    /// <response code="404">Producto no encontrado.</response>
+    /// <remarks>
+    /// **Requiere rol:** Administrador
+    /// No se puede actualizar el código ni el estado (activo/inactivo).
+    /// </remarks>
+    [HttpPut("{codigo}")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> Actualizar([FromRoute] string codigo, [FromBody] ActualizarProductoRequest req, CancellationToken ct)
+    {
+        if (req.Costo < 0)
+            return BadRequest("El costo debe ser un valor positivo.");
+        
+        if (req.Precio < 0)
+            return BadRequest("El precio debe ser un valor positivo.");
+        
+        if (req.Precio < req.Costo)
+            return BadRequest("El precio de venta debe ser mayor o igual al costo.");
+
+        var p = await productos.GetByCodigoAsync(codigo, ct);
+        if (p is null) return NotFound();
+
+        p.Nombre = req.Nombre.Trim();
+        p.Categoria = req.Categoria.Trim();
+        p.Costo = req.Costo;
+        p.Precio = req.Precio;
+        p.StockMinimo = req.StockMinimo;
+
+        await productos.UpdateAsync(p, ct);
+        await productos.SaveChangesAsync(ct);
+
+        return NoContent();
+    }
+
+    /// <summary>
     /// Obtiene un producto por su código único.
     /// </summary>
     /// <param name="codigo">Código único del producto (ej: PROD001).</param>
